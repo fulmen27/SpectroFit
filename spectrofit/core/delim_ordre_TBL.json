@@ -1,0 +1,8 @@
+//Délimitation des ordres spectre TBL
+{
+  "name": "core",
+  "version": "1.0.0",
+  "dependencies": {
+    
+  }
+}
