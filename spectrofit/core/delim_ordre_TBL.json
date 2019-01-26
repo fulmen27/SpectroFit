@@ -1,8 +1,150 @@
-//Délimitation des ordres spectre TBL
 {
-  "name": "core",
-  "version": "1.0.0",
-  "dependencies": {
-    
+  "ordre_0": {
+    "lim_basse": 370.0361,
+    "lim_haute": 376.5125
+  },
+  "ordre_1": {
+    "lim_basse": 374.6320,
+    "lim_haute": 382.8127
+  },
+  "ordre_2": {
+    "lim_basse": 380.8578,
+    "lim_haute": 389.3266
+  },
+  "ordre_3": {
+    "lim_basse": 387.3028,
+    "lim_haute": 396.0713
+  },
+  "ordre_4": {
+    "lim_basse": 393.9662,
+    "lim_haute": 403.0482
+  },
+  "ordre_5": {
+    "lim_basse": 400.8647,
+    "lim_haute": 410.2831
+  },
+  "ordre_6": {
+    "lim_basse": 408.0085,
+    "lim_haute": 417.7787
+  },
+  "ordre_7": {
+    "lim_basse": 415.4194,
+    "lim_haute": 425.5585
+  },
+  "ordre_8": {
+    "lim_basse": 423.1013,
+    "lim_haute": 433.6318
+  },
+  "ordre_9": {
+    "lim_basse": 431.0754,
+    "lim_haute": 442.0247
+  },
+  "ordre_10": {
+    "lim_basse": 439.3531,
+    "lim_haute": 450.7443
+  },
+  "ordre_11": {
+    "lim_basse": 447.9585,
+    "lim_haute": 459.8198
+  },
+  "ordre_12": {
+    "lim_basse": 456.9117,
+    "lim_haute": 469.2655
+  },
+  "ordre_13": {
+    "lim_basse": 466.2312,
+    "lim_haute": 479.1145
+  },
+  "ordre_14": {
+    "lim_basse": 475.9373,
+    "lim_haute": 489.3824
+  },
+  "ordre_15": {
+    "lim_basse": 486.0648,
+    "lim_haute": 500.1096
+  },
+  "ordre_16": {
+    "lim_basse": 496.6218,
+    "lim_haute": 511.3133
+  },
+  "ordre_17": {
+    "lim_basse": 507.6578,
+    "lim_haute": 523.0366
+  },
+  "ordre_18": {
+    "lim_basse": 519.1995,
+    "lim_haute": 535.3076
+  },
+  "ordre_19": {
+    "lim_basse": 531.2753,
+    "lim_haute": 548.1710
+  },
+  "ordre_20": {
+    "lim_basse": 543.9282,
+    "lim_haute": 561.6729
+  },
+  "ordre_21": {
+    "lim_basse": 557.2012,
+    "lim_haute": 575.8582
+  },
+  "ordre_22": {
+    "lim_basse": 571.1419,
+    "lim_haute": 590.7762
+  },
+  "ordre_23": {
+    "lim_basse": 585.7987,
+    "lim_haute": 606.4973
+  },
+  "ordre_24": {
+    "lim_basse": 601.2257,
+    "lim_haute": 623.0767
+  },
+  "ordre_25": {
+    "lim_basse": 617.5038,
+    "lim_haute": 640.5923
+  },
+  "ordre_26": {
+    "lim_basse": 634.6660,
+    "lim_haute": 659.0624
+  },
+  "ordre_27": {
+    "lim_basse": 652.8310,
+    "lim_haute": 678.4446
+  },
+  "ordre_28": {
+    "lim_basse": 672.0564,
+    "lim_haute": 699.0016
+  },
+  "ordre_29": {
+    "lim_basse": 692.6782,
+    "lim_haute": 720.8434
+  },
+  "ordre_30": {
+    "lim_basse": 715.0265,
+    "lim_haute": 744.0945
+  },
+  "ordre_31": {
+    "lim_basse": 738.8647,
+    "lim_haute": 768.8956
+  },
+  "ordre_32": {
+    "lim_basse": 764.3469,
+    "lim_haute": 795.4075
+  },
+  "ordre_33": {
+    "lim_basse": 791.6492,
+    "lim_haute": 823.8129
+  },
+  "ordre_34": {
+    "lim_basse": 820.9741,
+    "lim_haute": 854.3226
+  },
+  "ordre_35": {
+    "lim_basse": 852.5548,
+    "lim_haute": 887.1788
+  },
+  "ordre_36": {
+    "lim_basse": 886.6618,
+    "lim_haute": 1048.4739
   }
 }
