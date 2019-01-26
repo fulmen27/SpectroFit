@@ -4,7 +4,7 @@
 
 ## A faire Prochainement : 
 
-- Importation des fichiers CSV
+- Importation des fichiers CSV ==> fait
 - Délimitations des ordres avec retrait du recouvrement
 - Affichage de toutes les raies des éléments en fonction de la longueur d'onde
 
