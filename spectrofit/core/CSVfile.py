@@ -28,9 +28,9 @@ class ImportCSV:
             with open(self.my_csv["filename"], 'r') as self.my_csv["filename"]:
                 self.my_csv["csv_file"] = csv.reader(self.my_csv["filename"], delimiter=";")
                 for row in self.my_csv["csv_file"]:
-                    self.data["lambda"].append(row[0])
-                    self.data["yspectre"].append(row[1])
-                    self.data["3rd_col"].append(row[2])
+                    self.data["lambda"].append(float(row[0]))
+                    self.data["yspectre"].append(float(row[1]))
+                    self.data["3rd_col"].append(float(row[2]))
 
     def _open_delim(self):
         # ouvrir et classer les delimitations des ordres

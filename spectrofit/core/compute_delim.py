@@ -16,7 +16,7 @@ def compute_delim(my_import, num_ordre, btn_state):
                 x_upper = i-1
                 break
 
-        for j in range(int(x_lower), int(x_upper)):
+        for j in range(x_lower, x_upper):
             if float(my_import.data["lambda"][j]) > float(my_import.data["lambda"][j+1]):
                 x_lower = j+1
                 break
