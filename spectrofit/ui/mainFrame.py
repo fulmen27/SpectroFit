@@ -45,7 +45,7 @@ class MainFrame(ttk.Frame):
         self.compute_button = ttk.Button(buttons_frame, text="Compute", command=self._on_compute, state=tk.DISABLED)
         self.compute_button.grid(column=1, row=0)
 
-        ttk.Checkbutton(buttons_frame, text="Full_spectre", variable=self.full).grid(column=1, row=1)
+        ttk.Checkbutton(buttons_frame, text="Full spectre", variable=self.full).grid(column=1, row=1)
 
         text = tk.StringVar()
         text.set("Choisi ton ordre : ")
@@ -60,7 +60,6 @@ class MainFrame(ttk.Frame):
 
     def _on_compute(self):
         # On fais le découpage des spectres + affichage de l'ordre voulu par l'utilisateur
-        print('_on_compute')
         x, y = compute_delim(self.my_import, self.num_ordre.get(), self.full.get())
         plot_ordre(self.my_import, x, y)
 
