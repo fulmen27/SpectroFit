@@ -5,9 +5,17 @@
 ## A faire Prochainement : 
 
 - Importation des fichiers CSV ==> fait
-- Délimitations des ordres avec retrait du recouvrement
+- Délimitations des ordres avec retrait du recouvrement ==> fait
 - Affichage de toutes les raies des éléments en fonction de la longueur d'onde
 
-## Pour plus tard : 
+## Pour plus tard :
 
-- Algo de fit math
+- Algo de fit math : 
+
+  - guassian fit
+  - double gaussian fit
+  - expo fit
+  - double expo fit
+  - linear fit
+
+- affichage dans le canvas de la fenêtre

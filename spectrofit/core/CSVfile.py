@@ -53,7 +53,7 @@ class ImportCSV:
         self.lineident["filename"] = 'lineident.csv'
         if os.path.exists('lineident.csv'):
             with open(self.lineident["filename"], 'r') as f:
-                self.lineident["lineident_file"] = csv.reader(f,delimiter=";")
+                self.lineident["lineident_file"] = csv.reader(f, delimiter=";")
                 for row in self.lineident["lineident_file"]:
                     self.lineident["1st_col"].append(float(row[0]))
                     self.lineident["2nd_col"].append(float(row[1]))
