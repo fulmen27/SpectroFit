@@ -1,35 +1,16 @@
-import matplotlib
-matplotlib.use('TkAgg')
-
-import tkinter as tk
-
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-from matplotlib.backend_bases import MouseEvent
-from matplotlib.figure import Figure
-
+import matplotlib.pyplot as plt
 import numpy as np
 
 
-def callback(event):
-    print("clicked at", event.xdata, event.ydata)
+def model_lorentz(x, coefficients):
+    return - (2 / (np.pi * coefficients[1])) / (1 + ((x - coefficients[0]) / (0.5 * coefficients[1])) ** 2) + \
+           coefficients[2]
 
-root = tk.Tk()
 
-f = Figure(figsize=(5,4), dpi=100)
-a = f.add_subplot(111)
-t = np.arange(0.0,3.0,0.01)
-s = np.sin(2*np.pi*t)
+sol = [6.38951698e+07, -4.72605475e+05,  9.25324675e-01]
 
-a.plot(t,s)
+x = np.array([0.01 * i for i in range(10000)])
+y = model_lorentz(x, sol)
 
-canvas = FigureCanvasTkAgg(f, master=root)
-canvas.draw()
-canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-
-canvas.mpl_connect('button_press_event', callback)
-
-toolbar = NavigationToolbar2Tk( canvas, root )
-toolbar.update()
-canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-
-root.mainloop()
+plt.plot(x, y)
+plt.show()
