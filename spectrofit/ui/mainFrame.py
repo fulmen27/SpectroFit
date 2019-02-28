@@ -51,7 +51,7 @@ class MainFrame(ttk.Frame):
         menu_file = tk.Menu(menu_bar, tearoff=0)
         menu_file.add_command(label="Ouvrir un fichier CSV", command=self._open_csv)
         menu_file.add_command(label="Nettoyer le canvas", command=self._clean_canvas)
-        menu_file.add_command(label="Quitter", command=self.quit)
+        menu_file.add_command(label="Quitter", command=self.Quit)
         menu_bar.add_cascade(label="Fichier", menu=menu_file)
 
         self.master.config(menu=menu_bar)
@@ -78,7 +78,7 @@ class MainFrame(ttk.Frame):
         self.ent.pack(fill=tk.BOTH)
         self.ent.configure(textvariable=self.num_ordre)
 
-        quit_button = ttk.Button(buttons_frame, text='QUIT', command=self.quit)
+        quit_button = ttk.Button(buttons_frame, text='QUIT', command=self.Quit)
         quit_button.pack(fill=tk.BOTH)
 
         self.grid(column=1, row=0, sticky="nsew")
@@ -124,15 +124,23 @@ class MainFrame(ttk.Frame):
         print('you pressed %s' % event.key)
         key_press_handler(event, self.canvas, self.toolbar)
 
+    def _clean_list(self):
+        self.data["x"] = []
+        self.data["y"] = []
+        self.fits.x = []
+        self.fits.y = []
+
     def _clean_canvas(self):
         # on clean l'affichage
         self.fit_button.config(state=tk.DISABLED)
+        self._clean_list()
         self.canvas.get_tk_widget().delete("all")
 
     def _add_point(self, x, y):
         self.canvas.get_tk_widget().create_oval(x - 4, self.canvas.get_tk_widget().winfo_height() - (y - 4), x + 4,
                                                 self.canvas.get_tk_widget().winfo_height() - (y + 4), fill='green')
 
+    # FITS PART
     def _fit_algo(self):
         window = tk.Toplevel(self.master)
         text = tk.StringVar()
@@ -150,44 +158,63 @@ class MainFrame(ttk.Frame):
         double_expo.pack(fill=tk.BOTH)
         lorentz = ttk.Button(window, text="Lorentz", command=self._lorentz, state=tk.NORMAL)
         lorentz.pack(fill=tk.BOTH)
+        double_lorentz = ttk.Button(window, text="Double Lorentz", command=self._double_lorentz, state=tk.NORMAL)
+        double_lorentz.pack(fill=tk.BOTH)
         linear = ttk.Button(window, text="Linear", command=self._linear, state=tk.NORMAL)
         linear.pack(fill=tk.BOTH)
 
     def _simple_gaussian(self):
         sol = self.fits.simple_gaussian()
-        y = mF.model_simple_expo(self.data["x"], sol)
+        y = mF.model_simple_gaussian(self.data["x"], sol)
         self.fig = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
         self._set_canvas()
+        self._clean_list()
 
     def _double_gaussian(self):
         sol = self.fits.double_gaussian()
         y = mF.model_double_gaussian(self.data["x"], sol)
         self.fig = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
         self._set_canvas()
+        self._clean_list()
 
     def _simple_expo(self):
         sol = self.fits.simple_exp()
         y = mF.model_simple_expo(self.data["x"], sol)
         self.fig = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
         self._set_canvas()
+        self._clean_list()
 
     def _double_expo(self):
         sol = self.fits.double_exp()
         y = mF.model_double_expo(self.data["x"], sol)
         self.fig = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
         self._set_canvas()
+        self._clean_list()
 
     def _linear(self):
         sol = self.fits.linear()
         y = mF.model_linear(self.data["x"], sol)
         self.fig = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
         self._set_canvas()
+        self._clean_list()
 
     def _lorentz(self):
         sol = self.fits.lorentz()
         y = mF.model_lorentz(self.data["x"], sol)
         self.fig = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
         self._set_canvas()
+        self._clean_list()
 
-    def quit(self):
+    def _double_lorentz(self):
+        sol = self.fits.double_lorentz()
+        y = mF.model_double_lorentz(self.data["x"], sol)
+        self.fig = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
+        self._set_canvas()
+        self._clean_list()
+
+    # DESTROY()
+    def Quit(self):
+        self.canvas.get_tk_widget().delete("all")
+        self.canvas.get_tk_widget().destroy()
         self.master.destroy()
+        self.tk.quit()
