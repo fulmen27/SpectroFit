@@ -1,14 +1,12 @@
 import csv
 import json
 import os
-from pprint import pprint
 
 from tkinter.filedialog import askopenfilename
 
 
 class ImportCSV:
     def __init__(self):
-        print("import_csv")
         self.my_csv = dict()
         self.delim = dict()
         self.data = {"lambda": [], "yspectre": [], "3rd_col": []}
