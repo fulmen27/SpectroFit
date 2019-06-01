@@ -1,9 +1,12 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 import numpy as np
+import sys
 
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 from matplotlib.backend_bases import key_press_handler
+
+from PySide2.QtWidgets import QApplication, QWidget
 
 from spectrofit.core.CSVfile import ImportFile
 from spectrofit.core.compute_delim import compute_delim
@@ -11,6 +14,8 @@ from spectrofit.core.plots import plot_ordre
 
 from spectrofit.math.Fits import Fits
 import spectrofit.math.mathFunction as mF
+
+from spectrofit.tools.elements_table import ElementTable
 
 
 class MainFrame(ttk.Frame):
@@ -33,10 +38,14 @@ class MainFrame(ttk.Frame):
         self.my_import = None
         self.num_ordre.set(0)
         self.fig = None
+        self.ax = None
 
         self.lim = []
         self.data = {"x": [], "y": []}
         self.fits = Fits(self.data)
+
+        self.element_table = None
+        self.app = None
 
         self._set_ui()
 
@@ -55,6 +64,10 @@ class MainFrame(ttk.Frame):
         menu_file.add_command(label="Nettoyer le canvas", command=self._clean_canvas)
         menu_file.add_command(label="Quitter", command=self.Quit)
         menu_bar.add_cascade(label="Fichier", menu=menu_file)
+
+        menu_tools = tk.Menu(menu_bar, tearoff=0)
+        menu_tools.add_command(label="Find Ray", command=self._find_ray)
+        menu_bar.add_cascade(label="Outils", menu=menu_tools)
 
         self.master.config(menu=menu_bar)
 
@@ -87,7 +100,7 @@ class MainFrame(ttk.Frame):
 
     def _on_compute(self):
         self.lim = compute_delim(self.my_import, self.num_ordre.get(), self.full.get())
-        self.fig = plot_ordre(self.my_import, self.lim[0], self.lim[1])
+        self.fig, self.ax = plot_ordre(self.my_import, self.lim[0], self.lim[1])
         self._set_canvas()
 
     def _open_csv(self):
@@ -147,6 +160,12 @@ class MainFrame(ttk.Frame):
     def _add_point(self, x, y):
         self.canvas.get_tk_widget().create_oval(x - 4, self.canvas.get_tk_widget().winfo_height() - (y - 4), x + 4,
                                                 self.canvas.get_tk_widget().winfo_height() - (y + 4), fill='green')
+
+    def _find_ray(self):
+        self.app = QApplication(sys.argv)
+        window = QWidget()
+        self.element_table = ElementTable(window)
+        self.app.exec_()
 
     # FITS PART
     def _fit_algo(self):

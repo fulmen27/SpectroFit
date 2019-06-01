@@ -1,6 +1,6 @@
 import platform
 
-from spectrofit.ui.app import App
+from spectrofit.ui.QtApp import App
 
 print("Python version: {}".format(platform.python_version()))
 app = App()

@@ -3,7 +3,7 @@ import pylab as pl
 
 
 def plot_ordre(my_import, x_lower, x_upper, x_fit=0, y_fit=0):
-    fig = plt.figure()
+    fig = plt.figure(figsize=(25, 10))
     ax = plt.gca()
 
     ax.set_xlim(float(my_import.data["lambda"][x_lower]), float(my_import.data["lambda"][x_upper]))
@@ -17,4 +17,4 @@ def plot_ordre(my_import, x_lower, x_upper, x_fit=0, y_fit=0):
                color='green', s=0.1)
     plt.plot(x_fit, y_fit)
 
-    return fig
+    return fig, ax
