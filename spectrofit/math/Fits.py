@@ -7,6 +7,8 @@ class Fits:
         self.x = np.array(data["x"])
         self.y = np.array(data["y"])
 
+        self.abs = 0
+
         self.solution = dict()
 
     # FITS
@@ -94,7 +96,7 @@ class Fits:
         return self.solution["linear_fit"]
 
 
-# MODELS
+# MODELS Absorption
 
 def model_simple_gaussian(x, sigma1, mu1, add):
     return - 1 / (sigma1 * np.sqrt(2 * np.pi)) * np.exp(

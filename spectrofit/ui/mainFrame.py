@@ -1,16 +1,21 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 import numpy as np
+import sys
 
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 from matplotlib.backend_bases import key_press_handler
 
-from spectrofit.core.CSVfile import ImportCSV
+from PySide2.QtWidgets import QApplication, QWidget
+
+from spectrofit.core.CSVfile import ImportFile
 from spectrofit.core.compute_delim import compute_delim
 from spectrofit.core.plots import plot_ordre
 
 from spectrofit.math.Fits import Fits
 import spectrofit.math.mathFunction as mF
+
+from spectrofit.tools.elements_table import ElementTable
 
 
 class MainFrame(ttk.Frame):
@@ -27,15 +32,20 @@ class MainFrame(ttk.Frame):
         self.toolbar = None
 
         self.full = tk.BooleanVar(self, False)
+        self.absorb = tk.BooleanVar(self, False)
         self.num_ordre = tk.DoubleVar(master, 0.0)
 
         self.my_import = None
         self.num_ordre.set(0)
         self.fig = None
+        self.ax = None
 
         self.lim = []
         self.data = {"x": [], "y": []}
         self.fits = Fits(self.data)
+
+        self.element_table = None
+        self.app = None
 
         self._set_ui()
 
@@ -50,9 +60,14 @@ class MainFrame(ttk.Frame):
 
         menu_file = tk.Menu(menu_bar, tearoff=0)
         menu_file.add_command(label="Ouvrir un fichier CSV", command=self._open_csv)
+        menu_file.add_command(label="Ouvrir un fichier S", command=self._open_s)
         menu_file.add_command(label="Nettoyer le canvas", command=self._clean_canvas)
         menu_file.add_command(label="Quitter", command=self.Quit)
         menu_bar.add_cascade(label="Fichier", menu=menu_file)
+
+        menu_tools = tk.Menu(menu_bar, tearoff=0)
+        menu_tools.add_command(label="Find Ray", command=self._find_ray)
+        menu_bar.add_cascade(label="Outils", menu=menu_tools)
 
         self.master.config(menu=menu_bar)
 
@@ -85,12 +100,18 @@ class MainFrame(ttk.Frame):
 
     def _on_compute(self):
         self.lim = compute_delim(self.my_import, self.num_ordre.get(), self.full.get())
-        self.fig = plot_ordre(self.my_import, self.lim[0], self.lim[1])
+        self.fig, self.ax = plot_ordre(self.my_import, self.lim[0], self.lim[1])
         self._set_canvas()
 
     def _open_csv(self):
         # on ouvre le fichier que l'on fait choisir par l'utilisateur
-        self.my_import = ImportCSV()
+        self.my_import = ImportFile("csv")
+        self.compute_button.config(state=tk.NORMAL)
+        self.clean_button.config(state=tk.NORMAL)
+
+    def _open_s(self):
+        # on ouvre le fichier que l'on fait choisir par l'utilisateur
+        self.my_import = ImportFile("s")
         self.compute_button.config(state=tk.NORMAL)
         self.clean_button.config(state=tk.NORMAL)
 
@@ -101,7 +122,7 @@ class MainFrame(ttk.Frame):
         self.fits.x = np.append(self.fits.x, event.xdata)
         self.fits.y = np.append(self.fits.y, event.ydata)
         self._add_point(event.x, event.y)
-        if len(self.data["x"]) > 5 :
+        if len(self.data["x"]) > 5:
             self.fit_button.config(state=tk.NORMAL)
 
     def _set_canvas(self):
@@ -140,6 +161,12 @@ class MainFrame(ttk.Frame):
         self.canvas.get_tk_widget().create_oval(x - 4, self.canvas.get_tk_widget().winfo_height() - (y - 4), x + 4,
                                                 self.canvas.get_tk_widget().winfo_height() - (y + 4), fill='green')
 
+    def _find_ray(self):
+        self.app = QApplication(sys.argv)
+        window = QWidget()
+        self.element_table = ElementTable(window)
+        self.app.exec_()
+
     # FITS PART
     def _fit_algo(self):
         window = tk.Toplevel(self.master)
@@ -162,53 +189,61 @@ class MainFrame(ttk.Frame):
         double_lorentz.pack(fill=tk.BOTH)
         linear = ttk.Button(window, text="Linear", command=self._linear, state=tk.NORMAL)
         linear.pack(fill=tk.BOTH)
+        ttk.Checkbutton(window, text="Spectre absorption ?", variable=self.absorb).pack(fill=tk.BOTH)
 
     def _simple_gaussian(self):
+        self.fits.abs = self.absorb.get()
         sol = self.fits.simple_gaussian()
         y = mF.model_simple_gaussian(self.data["x"], sol)
-        self.fig = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
+        self.fig, self.ax = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
         self._set_canvas()
         self._clean_list()
 
     def _double_gaussian(self):
+        self.fits.abs = self.absorb.get()
         sol = self.fits.double_gaussian()
         y = mF.model_double_gaussian(self.data["x"], sol)
-        self.fig = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
+        self.fig, self.ax = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
         self._set_canvas()
         self._clean_list()
 
     def _simple_expo(self):
+        self.fits.abs = self.absorb.get()
         sol = self.fits.simple_exp()
         y = mF.model_simple_expo(self.data["x"], sol)
-        self.fig = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
+        self.fig, self.ax = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
         self._set_canvas()
         self._clean_list()
 
     def _double_expo(self):
+        self.fits.abs = self.absorb.get()
         sol = self.fits.double_exp()
         y = mF.model_double_expo(self.data["x"], sol)
-        self.fig = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
+        self.fig, self.ax = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
         self._set_canvas()
         self._clean_list()
 
     def _linear(self):
+        self.fits.abs = self.absorb.get()
         sol = self.fits.linear()
         y = mF.model_linear(self.data["x"], sol)
-        self.fig = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
+        self.fig, self.ax = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
         self._set_canvas()
         self._clean_list()
 
     def _lorentz(self):
+        self.fits.abs = self.absorb.get()
         sol = self.fits.lorentz()
         y = mF.model_lorentz(self.data["x"], sol)
-        self.fig = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
+        self.fig, self.ax = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
         self._set_canvas()
         self._clean_list()
 
     def _double_lorentz(self):
+        self.fits.abs = self.absorb.get()
         sol = self.fits.double_lorentz()
         y = mF.model_double_lorentz(self.data["x"], sol)
-        self.fig = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
+        self.fig, self.ax = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
         self._set_canvas()
         self._clean_list()
 

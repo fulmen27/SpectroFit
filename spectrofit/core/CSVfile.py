@@ -5,8 +5,8 @@ import os
 from tkinter.filedialog import askopenfilename
 
 
-class ImportCSV:
-    def __init__(self):
+class ImportFile:
+    def __init__(self, type):
         self.my_csv = dict()
         self.delim = dict()
         self.data = {"lambda": [], "yspectre": [], "3rd_col": []}
@@ -14,7 +14,10 @@ class ImportCSV:
 
         self.delim["filename"] = "delim_ordre_TBL.json"
 
-        self._open_csv()
+        if type == "s":
+            self._open_s()
+        elif type == "csv":
+            self._open_csv()
         self._open_delim()
         self._open_lineident()
 
@@ -33,6 +36,27 @@ class ImportCSV:
                     self.data["lambda"].append(float(row[0]))
                     self.data["yspectre"].append(float(row[1]))
                     self.data["3rd_col"].append(float(row[2]))
+        else:
+            raise ValueError("Filename empty or filename not find in path")
+
+    def _open_s(self):
+        filename = askopenfilename(title="Choisissez un fichier csv",
+                                   filetypes=(("fichier S", "*.s"), ("all files", "*.*")))
+
+        if filename != "" and filename is not None and os.path.exists(filename):
+            self.my_csv["filename"] = filename
+            with open(self.my_csv["filename"]) as my_file:
+                for row in my_file:
+                    r = row.rstrip().split(" ")
+                    while '' in r:
+                        r.remove('')
+                    if len(r) == 3:
+                        try:
+                            self.data["lambda"].append(float(r[0]))
+                            self.data["yspectre"].append(float(r[1]))
+                            self.data["3rd_col"].append(float(r[2]))
+                        except:
+                            print("can't convert value go to next line")
         else:
             raise ValueError("Filename empty or filename not find in path")
 
