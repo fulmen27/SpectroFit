@@ -25,6 +25,7 @@ class ImportFile(QMainWindow):
             self._open_csv()
         self._open_delim()
         self._open_lineident()
+        self._lineident_json_to_dict()
 
     def __str__(self):
         print(self.my_csv)
@@ -86,3 +87,7 @@ class ImportFile(QMainWindow):
                     self.lineident["element_name"].append(row[4])
         else:
             raise ValueError("No lineident found in path")
+
+    def _lineident_json_to_dict(self):
+        with open("./spectrofit/core/lineident.json", 'r') as f:
+            self.lineident_json = json.load(f)

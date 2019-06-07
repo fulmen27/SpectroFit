@@ -1,16 +1,10 @@
-import tkinter as tk
-import tkinter.ttk as ttk
 import numpy as np
-import sys
 
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-from matplotlib.patches import Circle
 
 from PySide2.QtWidgets import QGridLayout, QHBoxLayout, QWidget, QMenuBar, QMainWindow, QAction, QVBoxLayout, \
     QPushButton, QCheckBox, QLabel, QLineEdit, QMessageBox
-from PySide2.QtCore import QRect, QPointF
-from PySide2.QtGui import QPainter
+from PySide2.QtCore import QRect, Qt
 
 from spectrofit.ui.PainterCanvas import PainterCanvas
 
@@ -72,12 +66,14 @@ class MainFrame(QMainWindow, QWidget):
         file_menu.addAction(open_CSV)
 
         tools_menu = self.bar.addMenu("Tools")
-        find_ray = QAction("Trouver une raie", self.master)
-        find_ray.triggered.connect(self._find_ray)
-        tools_menu.addAction(find_ray)
-        fit = QAction("Fits", self.master)
-        fit.triggered.connect(self._fit_algo)
-        tools_menu.addAction(fit)
+        self.find_ray = QAction("Trouver une raie", self.master)
+        self.find_ray.setEnabled(False)
+        self.find_ray.triggered.connect(self._find_ray)
+        tools_menu.addAction(self.find_ray)
+        self.fit_button = QAction("Fits", self.master)
+        self.fit_button.setEnabled(False)
+        self.fit_button.triggered.connect(self._fit_algo)
+        tools_menu.addAction(self.fit_button)
         menu_layout.addWidget(self.bar)
         self.layout.addLayout(menu_layout, 0, 0, 1, -1)
 
@@ -96,11 +92,13 @@ class MainFrame(QMainWindow, QWidget):
 
         # Get Order
         label = QLabel("Choisit ton ordre")
+        label.setFixedHeight(10)
         btn_layout.addWidget(label)
         self.num_ordre = QLineEdit()
         btn_layout.addWidget(self.num_ordre)
+        btn_layout.setAlignment(Qt.AlignTop)
 
-        self.layout.addLayout(btn_layout, 1, 1)
+        self.layout.addLayout(btn_layout, 1, 1, Qt.AlignTop)
         self.master.setLayout(self.layout)
 
     def _open_csv(self):
@@ -119,6 +117,7 @@ class MainFrame(QMainWindow, QWidget):
             self.lim = compute_delim(self.my_import, order, self.full.isChecked())
             self.fig, self.ax = plot_ordre(self.my_import, self.lim[0], self.lim[1])
             self._set_canvas()
+            self.find_ray.setEnabled(True)
         except:
             print("erreur")
             warning = QMessageBox()
@@ -143,6 +142,7 @@ class MainFrame(QMainWindow, QWidget):
         layout_canvas.addWidget(self.toolbar)
         self.layout.addLayout(layout_canvas, 1, 0, -1, 1)
         self.master.setLayout(self.layout)
+        self.master.showMaximized()
 
     def _on_left_click(self, event):
         """SET POINTS"""
@@ -152,10 +152,12 @@ class MainFrame(QMainWindow, QWidget):
         self.fits.x = np.append(self.fits.x, event.xdata)
         self.fits.y = np.append(self.fits.y, event.ydata)
         self.canvas.create_oval(event.xdata, event.ydata, brush_color="green")
+        if len(self.data["x"]) > 5:
+            self.fit_button.setEnabled(True)
 
     def _find_ray(self):
         window = QWidget()
-        self.element_table = ElementTable(window)
+        self.element_table = ElementTable(self, window)
 
     def _fit_algo(self):
         self.window_fit = QWidget()

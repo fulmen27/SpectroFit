@@ -1,10 +1,7 @@
-
 from PySide2.QtCore import QPoint
 from PySide2.QtGui import QPainter, QColor
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-from matplotlib.patches import Circle
 
 
 class PainterCanvas(FigureCanvas):
@@ -14,6 +11,7 @@ class PainterCanvas(FigureCanvas):
         self.setParent(parent)
         self._instructions = []
         self.axes = ax
+        self.y_lim = self.axes.get_ylim()
 
     def paintEvent(self, event):
         super().paintEvent(event)

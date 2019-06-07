@@ -195,7 +195,7 @@ class MainFrame(ttk.Frame):
         self.fits.abs = self.absorb.get()
         sol = self.fits.simple_gaussian()
         y = mF.model_simple_gaussian(self.data["x"], sol)
-        self.fig = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
+        self.fig, self.ax = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
         self._set_canvas()
         self._clean_list()
 
@@ -203,7 +203,7 @@ class MainFrame(ttk.Frame):
         self.fits.abs = self.absorb.get()
         sol = self.fits.double_gaussian()
         y = mF.model_double_gaussian(self.data["x"], sol)
-        self.fig = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
+        self.fig, self.ax = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
         self._set_canvas()
         self._clean_list()
 
@@ -211,7 +211,7 @@ class MainFrame(ttk.Frame):
         self.fits.abs = self.absorb.get()
         sol = self.fits.simple_exp()
         y = mF.model_simple_expo(self.data["x"], sol)
-        self.fig = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
+        self.fig, self.ax = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
         self._set_canvas()
         self._clean_list()
 
@@ -219,7 +219,7 @@ class MainFrame(ttk.Frame):
         self.fits.abs = self.absorb.get()
         sol = self.fits.double_exp()
         y = mF.model_double_expo(self.data["x"], sol)
-        self.fig = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
+        self.fig, self.ax = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
         self._set_canvas()
         self._clean_list()
 
@@ -227,7 +227,7 @@ class MainFrame(ttk.Frame):
         self.fits.abs = self.absorb.get()
         sol = self.fits.linear()
         y = mF.model_linear(self.data["x"], sol)
-        self.fig = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
+        self.fig, self.ax = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
         self._set_canvas()
         self._clean_list()
 
@@ -235,7 +235,7 @@ class MainFrame(ttk.Frame):
         self.fits.abs = self.absorb.get()
         sol = self.fits.lorentz()
         y = mF.model_lorentz(self.data["x"], sol)
-        self.fig = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
+        self.fig, self.ax = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
         self._set_canvas()
         self._clean_list()
 
@@ -243,7 +243,7 @@ class MainFrame(ttk.Frame):
         self.fits.abs = self.absorb.get()
         sol = self.fits.double_lorentz()
         y = mF.model_double_lorentz(self.data["x"], sol)
-        self.fig = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
+        self.fig, self.ax = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
         self._set_canvas()
         self._clean_list()
 
