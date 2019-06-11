@@ -13,6 +13,7 @@ from spectrofit.core.compute_delim import compute_delim
 from spectrofit.core.plots import plot_ordre
 
 from spectrofit.math.Fits import Fits
+import  spectrofit.math.Fits as F
 import spectrofit.math.mathFunction as mF
 
 from spectrofit.tools.elements_table import ElementTable
@@ -36,6 +37,7 @@ class MainFrame(QMainWindow, QWidget):
         self.toolbar = None
         self.full = None
         self.num_ordre = None
+        self.abs = None
 
         # Imports
         self.my_import = None
@@ -119,9 +121,10 @@ class MainFrame(QMainWindow, QWidget):
             self._set_canvas()
             self.find_ray.setEnabled(True)
         except:
-            print("erreur")
-            warning = QMessageBox()
-            warning.setText("Please enter an integer")
+            self.warning = QMessageBox()
+            self.warning.setText("Please enter an integer")
+            self.warning.activateWindow()
+            self.warning.show()
     """
     def _set_canvas(self):
         layout_canvas = QVBoxLayout()
@@ -178,6 +181,9 @@ class MainFrame(QMainWindow, QWidget):
         double_lorentz.clicked.connect(self._double_lorentz)
         linear = QPushButton("linear")
         linear.clicked.connect(self._linear)
+        self.abs = QCheckBox("Spectre en absorption")
+        self.abs.setChecked(False)
+        layout_fit.addWidget(self.abs)
 
         layout_fit.addWidget(text)
         layout_fit.addWidget(simple_gaussian)
@@ -201,52 +207,68 @@ class MainFrame(QMainWindow, QWidget):
         self.window_fit.show()
 
     def _simple_gaussian(self):
-        sol = self.fits.simple_gaussian()
-        y = mF.model_simple_gaussian(self.data["x"], sol)
-        self.fig, self.ax = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
-        self._set_canvas()
+        if self.abs.isChecked():
+            sol = self.fits.simple_gaussian(F.model_simple_gaussian)
+            y = mF.model_simple_gaussian(self.data["x"], sol)
+        else:
+            sol = self.fits.simple_gaussian(F.model_simple_gaussian_emission)
+            y = mF.model_simple_gaussian_emission(self.data["x"], sol)
+        self.ax.plot(self.data["x"], y, color="green")
+        self.fig.canvas.draw()
         self._clean_list()
 
     def _double_gaussian(self):
-        sol = self.fits.double_gaussian()
-        y = mF.model_double_gaussian(self.data["x"], sol)
-        self.fig, self.ax = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
-        self._set_canvas()
+        if self.abs.isChecked():
+            sol = self.fits.double_gaussian(F.model_double_gaussian)
+            y = mF.model_double_gaussian(self.data["x"], sol)
+        else:
+            sol = self.fits.double_gaussian(F.model_double_gaussian_emission)
+            y = mF.model_double_gaussian_emission(self.data["x"], sol)
+        self.ax.plot(self.data["x"], y, color="green")
+        self.fig.canvas.draw()
         self._clean_list()
 
     def _simple_expo(self):
         sol = self.fits.simple_exp()
         y = mF.model_simple_expo(self.data["x"], sol)
-        self.fig, self.ax = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
-        self._set_canvas()
+        self.ax.plot(self.data["x"], y, color="green")
+        self.fig.canvas.draw()
         self._clean_list()
 
     def _double_expo(self):
         sol = self.fits.double_exp()
         y = mF.model_double_expo(self.data["x"], sol)
-        self.fig, self.ax = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
-        self._set_canvas()
+        self.ax.plot(self.data["x"], y, color="green")
+        self.fig.canvas.draw()
         self._clean_list()
 
     def _linear(self):
         sol = self.fits.linear()
         y = mF.model_linear(self.data["x"], sol)
-        self.fig, self.ax = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
-        self._set_canvas()
+        self.ax.plot(self.data["x"], y, color="green")
+        self.fig.canvas.draw()
         self._clean_list()
 
     def _lorentz(self):
-        sol = self.fits.lorentz()
-        y = mF.model_lorentz(self.data["x"], sol)
-        self.fig, self.ax = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
-        self._set_canvas()
+        if self.abs.isChecked():
+            sol = self.fits.lorentz(F.model_lorentz)
+            y = mF.model_lorentz(self.data["x"], sol)
+        else:
+            sol = self.fits.lorentz(F.model_lorentz_emission)
+            y = mF.model_lorentz_emission(self.data["x"], sol)
+        self.ax.plot(self.data["x"], y, color="green")
+        self.fig.canvas.draw()
         self._clean_list()
 
     def _double_lorentz(self):
-        sol = self.fits.double_lorentz()
-        y = mF.model_double_lorentz(self.data["x"], sol)
-        self.fig, self.ax = plot_ordre(self.my_import, self.lim[0], self.lim[1], x_fit=self.data["x"], y_fit=y)
-        self._set_canvas()
+        if self.abs.isChecked():
+            sol = self.fits.double_lorentz(F.model_double_lorentz)
+            y = mF.model_double_lorentz(self.data["x"], sol)
+        else:
+            sol = self.fits.double_lorentz(F.model_double_lorentz_emission)
+            y = mF.model_double_lorentz_emission(self.data["x"], sol)
+        self.ax.plot(self.data["x"], y, color="green")
+        self.fig.canvas.draw()
         self._clean_list()
 
     def _clean_list(self):
