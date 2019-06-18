@@ -1,4 +1,4 @@
-def compute_delim(my_import, num_ordre, btn_state):
+def compute_delim(my_import, num_ordre=None, btn_state=False):
     x_lower = 0
     x_upper = 0
     if btn_state:
