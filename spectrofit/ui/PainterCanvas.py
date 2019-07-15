@@ -27,6 +27,18 @@ class PainterCanvas(FigureCanvas):
             painter.setBrush(QColor(br_color))
             painter.drawEllipse(QPoint(x_pixel, y_pixel), rx, ry)
 
-    def create_oval(self, x, y, radius_x=5, radius_y=5, brush_color="red"):
+    def create_oval(self, x, y, radius_x=5, radius_y=5, brush_color="green"):
         self._instructions.append([x, y, radius_x, radius_y, brush_color])
+        self.update()
+
+    def clean_canvas(self, l=None):
+        if l is None:
+            self._instructions = []
+        else:
+            for i in range(len(l)):
+                j = 0
+                while j < len(self._instructions):
+                    if l[i][0] == self._instructions[j][0] and l[i][1] == self._instructions[j][1]:
+                        self._instructions.pop(j)
+                    j += 1
         self.update()
