@@ -3,9 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="1d15ce8f-66c0-46bd-be69-9d7f040f9087" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/spectrofit/core/compute_delim.py" beforeDir="false" afterPath="$PROJECT_DIR$/spectrofit/core/compute_delim.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/spectrofit/ui/PainterCanvas.py" beforeDir="false" afterPath="$PROJECT_DIR$/spectrofit/ui/PainterCanvas.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/spectrofit/ui/QtmainFrame.py" beforeDir="false" afterPath="$PROJECT_DIR$/spectrofit/ui/QtmainFrame.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -32,8 +29,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/spectrofit/ui/PainterCanvas.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="40" column="57" lean-forward="true" selection-start-line="40" selection-start-column="57" selection-end-line="40" selection-end-column="57" />
+            <state relative-caret-position="528">
+              <caret line="40" column="57" selection-start-line="40" selection-start-column="57" selection-end-line="40" selection-end-column="57" />
             </state>
           </provider>
         </entry>
@@ -41,8 +38,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/spectrofit/ui/QtmainFrame.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="226" column="30" lean-forward="true" selection-start-line="226" selection-start-column="30" selection-end-line="226" selection-end-column="30" />
+            <state relative-caret-position="3536">
+              <caret line="226" column="30" selection-start-line="226" selection-start-column="30" selection-end-line="226" selection-end-column="30" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -112,10 +109,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="125" />
-    <option name="y" value="15" />
-    <option name="width" value="1750" />
-    <option name="height" value="995" />
+    <option name="x" value="-10" />
+    <option name="y" value="-10" />
+    <option name="width" value="980" />
+    <option name="height" value="530" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -123,7 +120,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -158,6 +154,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -399,24 +396,24 @@
       <workItem from="1559933565359" duration="154000" />
       <workItem from="1560281917740" duration="3677000" />
       <workItem from="1560790008485" duration="1978000" />
-      <workItem from="1560857791369" duration="4242000" />
+      <workItem from="1560857791369" duration="4855000" />
+      <workItem from="1560944078914" duration="157000" />
     </task>
     <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="193422000" />
+    <option name="totallyTimeSpent" value="194192000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1550" height="878" extended-state="7" />
-    <editor active="true" />
+    <frame x="-7" y="-7" width="1550" height="878" extended-state="6" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25637585" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25973153" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3297587" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.20643431" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.20643431" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39812332" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -589,6 +586,11 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lineident.csv">
+      <provider selected="true" editor-type-id="csv-text-editor">
+        <state relative-caret-position="-8415">
+          <caret line="534" column="19" selection-start-line="534" selection-start-column="19" selection-end-line="534" selection-end-column="19" />
+        </state>
+      </provider>
       <provider editor-type-id="csv-table-editor">
         <state showInfoPanel="true" fixedHeaders="false" rowLines="3">
           <column index="0" width="100" />
@@ -597,11 +599,6 @@
       <provider editor-type-id="text-editor">
         <state relative-caret-position="170">
           <caret line="21762" column="19" lean-forward="true" selection-start-line="21762" selection-start-column="19" selection-end-line="21762" selection-end-column="19" />
-        </state>
-      </provider>
-      <provider selected="true" editor-type-id="csv-text-editor">
-        <state relative-caret-position="-8415">
-          <caret line="534" column="19" selection-start-line="534" selection-start-column="19" selection-end-line="534" selection-end-column="19" />
         </state>
       </provider>
     </entry>
@@ -707,16 +704,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/spectrofit/ui/QtmainFrame.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="226" column="30" lean-forward="true" selection-start-line="226" selection-start-column="30" selection-end-line="226" selection-end-column="30" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/spectrofit/tools/elements_table.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="221">
@@ -729,8 +716,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/spectrofit/ui/PainterCanvas.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="40" column="57" lean-forward="true" selection-start-line="40" selection-start-column="57" selection-end-line="40" selection-end-column="57" />
+        <state relative-caret-position="528">
+          <caret line="40" column="57" selection-start-line="40" selection-start-column="57" selection-end-line="40" selection-end-column="57" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/spectrofit/ui/QtmainFrame.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3536">
+          <caret line="226" column="30" selection-start-line="226" selection-start-column="30" selection-end-line="226" selection-end-column="30" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
