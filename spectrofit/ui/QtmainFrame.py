@@ -13,6 +13,7 @@ from spectrofit.core.compute_delim import compute_delim
 from spectrofit.core.plots import plot_ordre
 
 from spectrofit.math.Fits import Fits
+from spectrofit.math.UserFit import UserFit
 import spectrofit.math.Fits as F
 import spectrofit.math.mathFunction as mF
 
@@ -249,6 +250,10 @@ class MainFrame(QMainWindow, QWidget):
         double_lorentz.clicked.connect(self._double_lorentz)
         linear = QPushButton("linear")
         linear.clicked.connect(self._linear)
+        mix = QPushButton("mix")
+        mix.clicked.connect(self._mix)
+        new = QPushButton("new model")
+        new.clicked.connect(self._new)
         self.abs = QCheckBox("Spectre en absorption")
         self.abs.setChecked(False)
         layout_fit.addWidget(self.abs)
@@ -261,6 +266,8 @@ class MainFrame(QMainWindow, QWidget):
         layout_fit.addWidget(lorentz)
         layout_fit.addWidget(double_lorentz)
         layout_fit.addWidget(linear)
+        layout_fit.addWidget(mix)
+        layout_fit.addWidget(new)
 
         simple_gaussian.show()
         double_gaussian.show()
@@ -269,6 +276,8 @@ class MainFrame(QMainWindow, QWidget):
         lorentz.show()
         double_lorentz.show()
         linear.show()
+        mix.show()
+        new.show()
 
         self.window_fit.setLayout(layout_fit)
         self.window_fit.activateWindow()
@@ -297,21 +306,21 @@ class MainFrame(QMainWindow, QWidget):
         self._clean_list()
 
     def _simple_expo(self):
-        sol = self.fits.simple_exp()
+        sol = self.fits.simple_exp(F.model_simple_expo)
         y = mF.model_simple_expo(self.data["x"], sol)
         self.ax.plot(self.data["x"], y, color="green")
         self.fig.canvas.draw()
         self._clean_list()
 
     def _double_expo(self):
-        sol = self.fits.double_exp()
+        sol = self.fits.double_exp(F.model_double_expo)
         y = mF.model_double_expo(self.data["x"], sol)
         self.ax.plot(self.data["x"], y, color="green")
         self.fig.canvas.draw()
         self._clean_list()
 
     def _linear(self):
-        sol = self.fits.linear()
+        sol = self.fits.linear(F.model_linear)
         y = mF.model_linear(self.data["x"], sol)
         self.ax.plot(self.data["x"], y, color="green")
         self.fig.canvas.draw()
@@ -338,6 +347,12 @@ class MainFrame(QMainWindow, QWidget):
         self.ax.plot(self.data["x"], y, color="green")
         self.fig.canvas.draw()
         self._clean_list()
+
+    def _mix(self):
+        print("to be defined : mix")
+
+    def _new(self):
+        self.ufit = UserFit(self, self.data)
 
     def _clean_list(self):
         self.data["x"] = []

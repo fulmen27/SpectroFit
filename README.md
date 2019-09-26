@@ -1,21 +1,28 @@
-# SpectroFit
+# SpectroFit : Logiciel de traitement de Spectre de l'association IPSA VEGA
 
 
 
-## A faire Prochainement : 
+Ce document a pour but de décrire le fonctionnement du logiciel SpectroFit. Ce logiciel, développé, par les membres de l'association, en python, a pour but d'aider à l'analyse de spectres d'étoiles. 
 
-- Importation des fichiers CSV ==> fait
-- Délimitations des ordres avec retrait du recouvrement ==> fait
-- Affichage de toutes les raies des éléments en fonction de la longueur d'onde
+Plusieurs versions seront disponibles. Ce document sera mis à jour à chaque nouvelle fonctionnalité ajoutée. 
 
-## Pour plus tard :
+# I. Présentation :
 
-- Algo de fit math : 
+# II. Importer son fichier  & visualisation:
 
-  - guassian fit
-  - double gaussian fit
-  - expo fit
-  - double expo fit
-  - linear fit
+# III. Fit des données : 
 
-- affichage dans le canvas de la fenêtre
+# IV. Travaillez sur les raies spectrales : 
+
+
+
+
+
+Développé par Yoann AUDET. Tous droits réservés.
+
+
+
+
+
+
+
