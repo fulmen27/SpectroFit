@@ -35,8 +35,8 @@ class ImportFile(QMainWindow):
 
         if filename != "" and filename is not None and os.path.exists(filename[0]):
             self.my_csv["filename"] = filename[0]
-            with open(self.my_csv["filename"], 'r') as self.my_csv["filename"]:
-                self.my_csv["csv_file"] = csv.reader(self.my_csv["filename"], delimiter=";")
+            with open(self.my_csv["filename"], 'r') as my_file:
+                self.my_csv["csv_file"] = csv.reader(my_file, delimiter=";")
                 for row in self.my_csv["csv_file"]:
                     self.data["lambda"].append(float(row[0]))
                     self.data["yspectre"].append(float(row[1]))

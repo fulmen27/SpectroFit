@@ -1,5 +1,5 @@
 from PySide2.QtWidgets import QWidget, QPushButton, QVBoxLayout, QTabWidget
-from PyQt5.QtCore import pyqtSlot
+from PySide2.QtCore import SIGNAL, QObject
 
 from silx.gui.widgets import PeriodicTable
 
@@ -17,16 +17,15 @@ class ElementTable(QWidget):
     def set_ui(self):
         layout = QVBoxLayout()
         b_pt = QPushButton('Periodic Table')
-        b_pt.clicked.connect(self._start_periodic_table)
+        QObject.connect(b_pt, SIGNAL('clicked()'), self._start_periodic_table)
         layout.addWidget(b_pt)
         b_pt.show()
         btn_quit = QPushButton('Quit')
-        btn_quit.clicked.connect(self.quit)
+        QObject.connect(btn_quit, SIGNAL('clicked()'), self.quit)
         layout.addWidget(btn_quit)
         btn_quit.show()
         self.window.setLayout(layout)
 
-    @pyqtSlot(name="_start_periodic_table")
     def _start_periodic_table(self):
         self.w = QTabWidget()
         self.pt = PeriodicTable.PeriodicTable(self.w)
@@ -67,43 +66,61 @@ class ElementTable(QWidget):
     def _plot_element(self):
         e = self.selected_elements[-1]
         ordre = "ordre_{}".format(int(self.master.num_ordre.text()))
-        x_lower = self.master.my_import.delim["delim_data"][ordre]['lim_basse']
-        x_upper = self.master.my_import.delim["delim_data"][ordre]['lim_haute']
+        x_lower = \
+            self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["import"].delim["delim_data"][
+                ordre][
+                'lim_basse']
+        x_upper = \
+            self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["import"].delim["delim_data"][
+                ordre][
+                'lim_haute']
         ele_in_lims = []
         key_list = []
 
-        for key in self.master.my_import.lineident_json[e]:
+        for key in self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["import"].lineident_json[e]:
             if key != 'number':
-                if x_lower < self.master.my_import.lineident_json[e][key]["lambda"] < x_upper:
-                    ele_in_lims.append(self.master.my_import.lineident_json[e][key]["lambda"])
+                if x_lower < self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())][
+                    "import"].lineident_json[e][key]["lambda"] < x_upper:
+                    ele_in_lims.append(self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())][
+                                           "import"].lineident_json[e][key]["lambda"])
                     key_list.append(key)
 
-        y = [self.master.canvas.y_lim[0], self.master.canvas.y_lim[1]]
+        y = [self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["canvas"].y_lim[0],
+             self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["canvas"].y_lim[1]]
         for i in range(len(ele_in_lims)):
             x = [ele_in_lims[i], ele_in_lims[i]]
-            self.master.ax.plot(x, y, linewidth=2.0, linestyle='-.', label="{}".format(key_list[i]), color='b')
-            self.master.ax.text(ele_in_lims[i], self.master.canvas.y_lim[0], "{}".format(e),
-                                color='b', fontsize=12)
-        self.master.fig.canvas.draw()
+            self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["ax"].plot(x, y, linewidth=2.0,
+                                                                                               linestyle='-.',
+                                                                                               label="{}".format(
+                                                                                                   key_list[i]),
+                                                                                               color='b')
+            self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["ax"].text(ele_in_lims[i],
+                                                                                               self.master.dict_tabs[
+                                                                                                   "Tab_{}".format(
+                                                                                                       self.master.tabs.currentIndex())][
+                                                                                                   "canvas"].y_lim[
+                                                                                                   0], "{}".format(e),
+                                                                                               color='b', fontsize=12)
+            self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["fig"].canvas.draw()
 
     def _supress_plot_element(self, to_erase):
         k = 0
-        l = len(self.master.ax.lines)
+        l = len(self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["ax"].lines)
         for j in range(l):
-            line = self.master.ax.lines[j - k]
+            line = self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["ax"].lines[j - k]
             if line.get_label()[0:2].replace(" ", "") == to_erase[0]:
-                self.master.ax.lines.remove(line)
+                self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["ax"].lines.remove(line)
                 k += 1
-        self.master.fig.canvas.draw()
+        self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["fig"].canvas.draw()
 
         k = 0
-        l = len(self.master.ax.texts)
+        l = len(self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["ax"].texts)
         for j in range(l):
-            txt = self.master.ax.texts[j - k]
+            txt = self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["ax"].texts[j - k]
             if txt.get_text() == to_erase[0]:
-                self.master.ax.texts.remove(txt)
+                self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["ax"].texts.remove(txt)
                 k += 1
-        self.master.fig.canvas.draw()
+        self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["fig"].canvas.draw()
 
     def change_list(self, items):
         print("New list selection:", [item.symbol for item in items])
@@ -114,6 +131,5 @@ class ElementTable(QWidget):
     def click_table(self, item):
         print("New table click: %s (%s)" % (item.name, item.subcategory))
 
-    @pyqtSlot(name="quit")
     def quit(self):
         self.window.close()
