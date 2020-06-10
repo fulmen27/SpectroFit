@@ -38,13 +38,42 @@ class SigProcToolbox(QWidget):
         self.tabs.addTab(self.tab2, "Wavelet Denoising")
 
         # Create first tab
+        self._set_ui_tab1()
+
+
+        # Create second tab
+        self._set_ui_tab2()
+
+        # Add tabs to widget
+        self.layout.addWidget(self.tabs)
+
+        self.window.setLayout(self.layout)
+        self.window.show()
+
+    """
+        FUNCTION TO SET USER INTERFACE OF DIFFERENT TABS
+    """
+
+    def _set_ui_tab1(self):
         self.tab1.layout = QVBoxLayout(self.tabs)
-        self.pushButton1 = QPushButton("PyQt5 button")
+        self.pushButton1 = QPushButton("THIS PART WILL COME LATER")
         QObject.connect(self.pushButton1, SIGNAL('clicked()'), self.on_click)
         self.tab1.layout.addWidget(self.pushButton1)
         self.tab1.setLayout(self.tab1.layout)
 
-        # Create second tab
+    def _set_ui_tab2(self):
+        """"
+               _set_ui_tab2
+
+            @:brief
+                Set user interface of the second tab : wavelet processing tab
+
+            @:parameter
+                self
+
+            @:return
+                None
+        """
         lay = QGridLayout(self.tab2)
         label = QLabel("Wavelet family :")
         lay.addWidget(label, 0, 1)
@@ -73,7 +102,7 @@ class SigProcToolbox(QWidget):
             self.wavelet_combo_box[key] = QComboBox()
             l = pywt.wavelist(key)
             self.wavelet_combo_box[key].addItems(l)
-            lay.addWidget(self.wavelet_combo_box[key], i+1, 2)
+            lay.addWidget(self.wavelet_combo_box[key], i + 1, 2)
 
         label_order_decomp = QLabel("choose order of decomposition : \t")
         lay.addWidget(label_order_decomp, 0, 0)
@@ -86,16 +115,38 @@ class SigProcToolbox(QWidget):
         lay.addWidget(self.process_wavelet, i + 2, 3)
         self.tab2.setLayout(lay)
 
-        # Add tabs to widget
-        self.layout.addWidget(self.tabs)
-
-        self.window.setLayout(self.layout)
-        self.window.show()
+    """
+        PROCESSING AND COMPUTATION FUNCTION TAB 1
+    """
 
     def on_click(self):
         print("TBD")
 
+    """
+        PROCESSING AND COMPUTATION FUNCTION TAB 2
+    """
+
     def _on_process_wavelet(self):
+        """"
+            _on_process_wavelet(self)
+
+        @:brief
+            This function is used to process all choices made by the user when it click on the process button on the
+            second tab.
+
+            We will check that user only checked one wavelet method box and that he entered all number need. Then we
+            will store that information for further use
+
+            We process the wavelet decomposition in this function
+
+            Call wavelet_to_keep()
+
+        @:parameter
+            self
+
+        @:return
+            None
+        """
         my_import = self.main_frame.dict_tabs["Tab_{}".format(self.main_frame.tabs.currentIndex())]["import"]
         x_lower = self.main_frame.dict_tabs["Tab_{}".format(self.main_frame.tabs.currentIndex())]["lim"][0]
         x_upper = self.main_frame.dict_tabs["Tab_{}".format(self.main_frame.tabs.currentIndex())]["lim"][1]
@@ -141,13 +192,30 @@ class SigProcToolbox(QWidget):
             self.wavelet_to_keep()
 
     def wavelet_to_keep(self):
+        """
+            wavelet_to_keep(self)
+
+            @:brief
+                Propose to the user all the results from the wavelet decomposition
+
+                User have to choose what he wants to continue (which signals to keep with attenuation or not)
+                If you select a graph and don't put a number in the attenuation column the default value is 1
+
+                When button is click call : _on_wavelet_return
+
+            @:parameter
+                self
+
+            @:return
+                None
+        """
         self.window = QWidget()
         lay = QGridLayout(self.window)
         i = 0
         label = QLabel("attenuation coeff (1 by default)")
         lay.addWidget(label, i, 2)
         for key, value in self.coeffs_waverec.items():
-            checkbox = checkbox = QCheckBox("Keep that part ?")
+            checkbox = QCheckBox("Keep that part ?")
             checkbox.setChecked(False)
             self.checkbox_keep_wavelet[key] = checkbox
             lay.addWidget(checkbox, i + 1, 1)
@@ -171,6 +239,20 @@ class SigProcToolbox(QWidget):
         self.window.showMaximized()
 
     def _on_wavelet_return(self):
+        """
+            _on_wavelet_return
+
+            @:brief
+                Compute choices of the user for the wavelet processing
+
+                Call MainFrame method : add_tab_from_wavelet(self.args) to add a tab with the processed signal
+
+            @:parameter
+                self
+
+            @:return
+                None
+        """
         to_keep = dict()
         for key, value in self.checkbox_keep_wavelet.items():
             if value.isChecked():
@@ -195,7 +277,9 @@ class SigProcToolbox(QWidget):
 
 
 class SigProcToolboxFig(FigureCanvas):
-
+    """
+        A SIMPLE CLASS TO CREATE GRAPHS FOR WAVELET PROCESSING
+    """
     def __init__(self, fig):
         self.fig = fig
         FigureCanvas.__init__(self, self.fig)

@@ -100,7 +100,13 @@ venv.bak/
 # mkdocs documentation
 /site
 
+.idea/
+
 # mypy
 .mypy_cache/
 
 *.csv
+
+test/
+
+test/test.hdf5
