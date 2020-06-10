@@ -1,6 +1,8 @@
 def compute_delim(my_import, num_ordre=None, btn_state=False):
     x_lower = 0
     x_upper = 0
+    lower_lim = None
+    upper_lim = None
     if btn_state:
         x_lower = 1
         x_upper = -1
@@ -32,5 +34,4 @@ def compute_delim(my_import, num_ordre=None, btn_state=False):
             if upper_lim < my_import.lineident["lambda"][k] and my_import.lineident["x_upper"] is None :
                 my_import.lineident["x_upper"] = k - 1
 
-    return x_lower, x_upper
-
+    return x_lower, x_upper, lower_lim, upper_lim

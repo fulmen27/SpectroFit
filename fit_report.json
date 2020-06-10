@@ -1,0 +1,5 @@
+{"lim": [655.4991, 657.0007],
+  "Lorentzian_number : 1":
+    {"parameter_mu": 656.099, "parameter_gamma": 0.247, "parameter_add": 0.142},
+  "Gaussian number : 1":
+    {"parameter_mu_": 656.037, "parameter_sigma": 0.539, "parameter_add": 0.0}}

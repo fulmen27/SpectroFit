@@ -18,3 +18,13 @@ def plot_ordre(my_import, x_lower, x_upper, x_fit=0, y_fit=0):
     plt.plot(x_fit, y_fit)
 
     return fig, ax
+
+
+def plot_from_xy_list(args):
+    fig = plt.figure(figsize=(25, 10))
+    ax = plt.gca()
+    ax.set_xlim(float(args["import"].data["lambda"][args["lower"]]), float(args["import"].data["lambda"][args["upper"]]))
+
+    plt.plot(args["x"], args["y"], color='red')
+
+    return fig, ax
