@@ -166,7 +166,13 @@ class SigProcToolbox(QWidget):
             except ValueError:
                 self.main_frame.error("enter an integer as decomposition order")
 
-            sig = my_import.data["yspectre"][x_lower: x_upper]
+            if my_import.type == "s" or my_import.type == "csv":
+                sig = my_import.data["yspectre"][x_lower: x_upper]
+            elif my_import.type == "fits":
+                idx2 = my_import.fits_data["Wav"].columns.get_loc("Intensity")
+                sig = my_import.fits_data["Wav"].iloc[x_lower: x_upper, idx2].to_numpy()
+            else:
+                raise ValueError("No x and y data for graph : unknown format of file")
 
             self.coeffs = pywt.wavedec(sig, self.wavelet_parameters["wavelet_family"],
                                        self.wavelet_parameters["order_decomp"])
@@ -187,7 +193,13 @@ class SigProcToolbox(QWidget):
             self.args["import"] = my_import
             self.args["lim"] = self.main_frame.dict_tabs["Tab_{}".format(self.main_frame.tabs.currentIndex())]["lim"]
 
-            self.args["x"] = my_import.data["lambda"][x_lower: x_upper]
+            if my_import.type == "s" or my_import.type == "csv":
+                self.args["x"] = my_import.data["lambda"][x_lower: x_upper]
+            elif my_import.type == "fits":
+                idx1 = my_import.fits_data["Wav"].columns.get_loc("Wavelength1")
+                self.args["x"] = my_import.fits_data["Wav"].iloc[x_lower: x_upper, idx1].to_numpy()
+            else:
+                raise ValueError("No x and y data for graph : unknown format of file")
 
             self.wavelet_to_keep()
 

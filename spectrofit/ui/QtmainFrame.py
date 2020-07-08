@@ -98,6 +98,9 @@ class MainFrame(QMainWindow, QWidget):
         open_CSV = QAction("Ouvrir fichier CSV", self.master)
         open_CSV.triggered.connect(self._open_csv)
         file_menu.addAction(open_CSV)
+        open_fits = QAction("Ouvrir fichier fits", self.master)
+        open_fits.triggered.connect(self._open_fits)
+        file_menu.addAction(open_fits)
 
         tools_menu = self.bar.addMenu("Tools")
         self.find_ray = QAction("Trouver une raie", self.master)
@@ -199,8 +202,20 @@ class MainFrame(QMainWindow, QWidget):
             self.dict_tabs["Tab_{}".format(self.tabs.count())]["fig"] = fig
             self.dict_tabs["Tab_{}".format(self.tabs.count())]["ax"] = ax
             self.dict_tabs["Tab_{}".format(self.tabs.count())]["data"] = dict()
-            self.dict_tabs["Tab_{}".format(self.tabs.count())]["data"]["x"] = my_import.data["lambda"][lim[0]: lim[1]]
-            self.dict_tabs["Tab_{}".format(self.tabs.count())]["data"]["y"] = my_import.data["yspectre"][lim[0]: lim[1]]
+            if my_import.type == "s" or my_import.type == "csv":
+                self.dict_tabs["Tab_{}".format(self.tabs.count())]["data"]["x"] = my_import.data["lambda"][
+                                                                                  lim[0]: lim[1]]
+                self.dict_tabs["Tab_{}".format(self.tabs.count())]["data"]["y"] = my_import.data["yspectre"][
+                                                                                  lim[0]: lim[1]]
+            elif my_import.type == "fits":
+                idx1 = my_import.fits_data["Wav"].columns.get_loc("Wavelength1")
+                idx2 = my_import.fits_data["Wav"].columns.get_loc("Intensity")
+                self.dict_tabs["Tab_{}".format(self.tabs.count())]["data"]["x"] = my_import.fits_data["Wav"].iloc[
+                                                                                  lim[0]: lim[1], idx1].to_numpy()
+                self.dict_tabs["Tab_{}".format(self.tabs.count())]["data"]["y"] = my_import.fits_data["Wav"].iloc[
+                                                                                  lim[0]: lim[1], idx2].to_numpy()
+            else:
+                raise ValueError("No x and y data for graph : unknown format of file")
             self.dict_tabs["Tab_{}".format(self.tabs.count())]["Fit"] = Fits(self,
                                                                              self.dict_tabs[
                                                                                  "Tab_{}".format(self.tabs.count())][
@@ -267,8 +282,20 @@ class MainFrame(QMainWindow, QWidget):
             self.dict_tabs["Tab_{}".format(pos)]["fig"] = fig
             self.dict_tabs["Tab_{}".format(pos)]["ax"] = ax
             self.dict_tabs["Tab_{}".format(pos)]["data"] = dict()
-            self.dict_tabs["Tab_{}".format(pos)]["data"]["x"] = my_import.data["lambda"][lim[0]: lim[1]]
-            self.dict_tabs["Tab_{}".format(pos)]["data"]["y"] = my_import.data["yspectre"][lim[0]: lim[1]]
+            if my_import.type == "s" or my_import.type == "csv":
+                self.dict_tabs["Tab_{}".format(self.tabs.count())]["data"]["x"] = my_import.data["lambda"][
+                                                                                  lim[0]: lim[1]]
+                self.dict_tabs["Tab_{}".format(self.tabs.count())]["data"]["y"] = my_import.data["yspectre"][
+                                                                                  lim[0]: lim[1]]
+            elif my_import.type == "fits":
+                idx1 = my_import.fits_data["Wav"].columns.get_loc("Wavelength1")
+                idx2 = my_import.fits_data["Wav"].columns.get_loc("Intensity")
+                self.dict_tabs["Tab_{}".format(pos)]["data"]["x"] = my_import.fits_data["Wav"].iloc[
+                                                                                  lim[0]: lim[1], idx1].to_numpy()
+                self.dict_tabs["Tab_{}".format(pos)]["data"]["y"] = my_import.fits_data["Wav"].iloc[
+                                                                                  lim[0]: lim[1], idx2].to_numpy()
+            else:
+                raise ValueError("No x and y data for graph : unknown format of file")
             self.dict_tabs["Tab_{}".format(pos)]["Fit"] = Fits(self, self.dict_tabs["Tab_{}".format(pos)]["data"])
             self.dict_tabs["Tab_{}".format(pos)]["fitting_bound"] = dict()
             self.dict_tabs["Tab_{}".format(pos)]["fitting_bound"]["x"] = list()
@@ -434,6 +461,11 @@ class MainFrame(QMainWindow, QWidget):
         self.links_list.append([self.tabs.count(), None, my_import])
         self.compute_button.setEnabled(True)
 
+    def _open_fits(self):
+        my_import = ImportFile("fits", self.master)
+        self.links_list.append([self.tabs.count(), None, my_import])
+        self.compute_button.setEnabled(True)
+
     def _on_compute(self):
         """
                _on_compute
@@ -468,8 +500,7 @@ class MainFrame(QMainWindow, QWidget):
         else:
             try:
                 order = int(self.num_ordre.text())
-                lim = compute_delim(my_import, num_ordre=order)
-                fig, ax = plot_ordre(my_import, lim[0], lim[1])
+                fig, ax, lim = plot_ordre(my_import, order=order, btn_state=self.full.isChecked())
                 self._set_canvas(my_import, lim, fig, ax, reprint)
                 self.find_ray.setEnabled(True)
                 self.clean_button.setEnabled(True)
@@ -782,7 +813,9 @@ class MainFrame(QMainWindow, QWidget):
 
     def _interactive_fit(self):
         x = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x
+        print(x)
         y = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].y
+        print(y)
         data = {"x": x, "y": y}
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["interactive_fit"] = InteractiveFit(data)
 
