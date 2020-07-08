@@ -110,3 +110,7 @@ venv.bak/
 test/
 
 test/test.hdf5
+
+*.tar.gz
+
+Neo_Bta_CrB/
