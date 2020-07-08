@@ -1,6 +1,8 @@
 import csv
 import json
-import os
+from astropy.io import fits
+import numpy as np
+import pandas as pd
 
 from PySide2.QtWidgets import QFileDialog, QMainWindow
 import os
@@ -14,16 +16,22 @@ class ImportFile(QMainWindow):
         self.master = master
         self.my_csv = dict()
         self.delim = dict()
+        self.type = ""
         self.data = {"lambda": [], "yspectre": [], "3rd_col": []}
+        self.fits_data = {}
         self.lineident = {"1st_col": [], "2nd_col": [], "3rd_col": [], "lambda": [], "element_name": []}
 
         self.delim["filename"] = "delim_ordre_TBL.json"
 
         if type == "s":
             self._open_s()
+            self._open_delim()
         elif type == "csv":
             self._open_csv()
-        self._open_delim()
+            self._open_delim()
+        elif type == "fits":
+            self._open_fits()
+
         self._open_lineident()
         self._lineident_json_to_dict()
 
@@ -35,6 +43,7 @@ class ImportFile(QMainWindow):
 
         if filename != "" and filename is not None and os.path.exists(filename[0]):
             self.my_csv["filename"] = filename[0]
+            self.type = "csv"
             with open(self.my_csv["filename"], 'r') as my_file:
                 self.my_csv["csv_file"] = csv.reader(my_file, delimiter=";")
                 for row in self.my_csv["csv_file"]:
@@ -48,6 +57,7 @@ class ImportFile(QMainWindow):
         filename = QFileDialog.getOpenFileName(self, "S files", os.getcwd(), "*.s;;*.*")
         if filename != "" and filename is not None and os.path.exists(filename[0]):
             self.my_csv["filename"] = filename[0]
+            self.type = "s"
             with open(self.my_csv["filename"]) as my_file:
                 for row in my_file:
                     r = row.rstrip().split(" ")
@@ -63,14 +73,47 @@ class ImportFile(QMainWindow):
         else:
             raise ValueError("Filename empty or filename not find in path")
 
+    def _open_fits(self):
+        filename = QFileDialog.getOpenFileName(self, "S files", os.getcwd(), "*.fits;;*.*")
+        if filename != "" and filename is not None and os.path.exists(filename[0]):
+            self.my_csv["filename"] = filename[0]
+            f = fits.open(self.my_csv["filename"])
+            self.type = "fits"
+            error = True
+            for i in range(len(f)):
+                try:
+                    data = np.asarray(f[i].data)
+                    pd_table = pd.DataFrame(data)
+                    if "Wavelength1" in pd_table.columns and "Intensity" in pd_table.columns:
+                        pd_table["Wavelength1"] = pd_table["Wavelength1"].divide(10.0)
+                        if pd_table["Wavelength1"].iloc[0] > pd_table["Wavelength1"].iloc[-1]:
+                            pd_table = pd_table.iloc[::-1]
+                        self.fits_data["Wav"] = pd_table
+                    elif "Velocity" in pd_table.columns and "Intensity" in pd_table.columns :
+                        self.fits_data["vel"] = pd_table
+                    elif "Orderlimit" in pd_table.columns:
+                        self.fits_data["order"] = pd_table
+                    else:
+                        raise ValueError("Couldn't convert the table to a known format")
+                    error = False
+                except ValueError:
+                    if len(f) == 1:
+                        raise ValueError("Couldn't convert data")
+                    else:
+                        if i == len(f) - 1 and error:
+                            raise ValueError("Couldn't convert any of the table")
+                        else:
+                            print("Error when converting one table : going to next")
+        else:
+            raise ValueError("Filename empty or filename not find in path")
+
     def _open_delim(self):
         # ouvrir et classer les delimitations des ordres
         self.delim["filename"] = "./spectrofit/core/delim_ordre_TBL.json"
         if os.path.exists(self.delim["filename"]):
-            self.delim["delim_file"] = open(self.delim["filename"])
-            self.delim["delim_data"] = json.load(self.delim["delim_file"])
-            # pprint(self.delim["delim_data"])
-            # print(self.delim["delim_data"]['ordre_32']['lim_basse'])
+            with open(self.delim["filename"]) as f:
+                self.delim["delim_file"] = f
+                self.delim["delim_data"] = json.load(f)
         else:
             raise ValueError("No delim order TBL (JSON file) found in path")
 
