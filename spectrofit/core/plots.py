@@ -13,15 +13,16 @@ def plot_ordre(my_import, order=0, btn_state=False):
 
         idx1 = my_import.fits_data["Wav"].columns.get_loc("Wavelength1")
         idx2 = my_import.fits_data["Wav"].columns.get_loc("Intensity")
+        idx3 = my_import.fits_data["Wav"].columns.get_loc("Error")
 
         x = my_import.fits_data["Wav"].iloc[lim[0]: lim[1], idx1].to_numpy()
         y = my_import.fits_data["Wav"].iloc[lim[0]: lim[1], idx2].to_numpy()
-        print(x)
-        print(y)
+        error = my_import.fits_data["Wav"].iloc[lim[0]: lim[1], idx3].to_numpy()
 
         ax.set_xlim(int(min(x)), int(max(x)) + 1)
-        ax.set_ylim(min(y), max(y))
+        ax.set_ylim(min(y - error), max(y + error))
         ax.plot(x, y, color='red')
+        ax.fill_between(x, y - error, y + error, edgecolor='#CC4F1B', facecolor='#FF9848', alpha=0.3)
 
         y = [0.1 for _ in
              range(len(my_import.lineident["lambda"][my_import.lineident["x_lower"]: my_import.lineident["x_upper"]]))]
