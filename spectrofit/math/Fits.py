@@ -30,7 +30,7 @@ class Fits:
         self.solution["simple_gaussian_fit"] = [self.solution["simple_gaussian"].best_values['sigma1_g'],
                                                 self.solution["simple_gaussian"].best_values['mu1_g'],
                                                 self.solution["simple_gaussian"].best_values['add_g']]
-        return self.solution["simple_gaussian_fit"]
+        return self.solution["simple_gaussian_fit"], self.solution["simple_gaussian"].fit_report()
 
     def double_gaussian(self, mod):
         min = np.asarray(self.x).min()
@@ -51,7 +51,7 @@ class Fits:
                                                 self.solution["double_gaussian"].best_values['sigma2_dg'],
                                                 self.solution["double_gaussian"].best_values['mu2_dg'],
                                                 self.solution["double_gaussian"].best_values['add_dg']]
-        return self.solution["double_gaussian_fit"]
+        return self.solution["double_gaussian_fit"], self.solution["double_gaussian"].fit_report()
 
     def simple_exp(self, mod):
         gmodel = Model(mod)
@@ -61,7 +61,7 @@ class Fits:
         self.solution["simple_exp_fit"] = [self.solution["simple_exp"].best_values['a_e'],
                                            self.solution["simple_exp"].best_values['b_e'],
                                            self.solution["simple_exp"].best_values['add_e'], ]
-        return self.solution["simple_exp_fit"]
+        return self.solution["simple_exp_fit"], self.solution["simple_exp"].fit_report()
 
     def double_exp(self, mod):
         gmodel = Model(mod)
@@ -74,7 +74,7 @@ class Fits:
                                            self.solution["double_exp"].best_values['c_de'],
                                            self.solution["double_exp"].best_values['d_de'],
                                            self.solution["double_exp"].best_values['add_de']]
-        return self.solution["double_exp_fit"]
+        return self.solution["double_exp_fit"], self.solution["double_exp"].fit_report()
 
     def lorentz(self, mod):
         min = np.asarray(self.x).min()
@@ -89,7 +89,7 @@ class Fits:
         self.solution["lorentz_fit"] = [self.solution["lorentz"].best_values['mu_l'],
                                         self.solution["lorentz"].best_values['gamma_l'],
                                         self.solution["lorentz"].best_values['add_l']]
-        return self.solution["lorentz_fit"]
+        return self.solution["lorentz_fit"], self.solution["lorentz"].fit_report()
 
     def double_lorentz(self, mod):
         min = np.asarray(self.x).min()
@@ -110,7 +110,7 @@ class Fits:
                                                self.solution["double_lorentz"].best_values['mu2_dl'],
                                                self.solution["double_lorentz"].best_values['gamma2_dl'],
                                                self.solution["double_lorentz"].best_values['add_dl']]
-        return self.solution["double_lorentz_fit"]
+        return self.solution["double_lorentz_fit"], self.solution["double_lorentz"].fit_report()
 
     def linear(self, mod):
         gmodel = Model(mod)
@@ -119,7 +119,7 @@ class Fits:
         self.master.info(self.solution["linear"].fit_report())
         self.solution["linear_fit"] = [self.solution["linear"].best_values['a_l'],
                                        self.solution["linear"].best_values['b_l']]
-        return self.solution["linear_fit"]
+        return self.solution["linear_fit"], self.solution["linear"].fit_report()
 
 
 # MODELS Emission

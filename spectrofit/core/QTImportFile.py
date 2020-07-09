@@ -84,6 +84,7 @@ class ImportFile(QMainWindow):
                 try:
                     data = np.asarray(f[i].data)
                     pd_table = pd.DataFrame(data)
+                    print(pd_table)
                     if "Wavelength1" in pd_table.columns and "Intensity" in pd_table.columns:
                         pd_table["Wavelength1"] = pd_table["Wavelength1"].divide(10.0)
                         if pd_table["Wavelength1"].iloc[0] > pd_table["Wavelength1"].iloc[-1]:

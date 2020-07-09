@@ -5,7 +5,7 @@ from matplotlib.backend_bases import MouseButton
 import matplotlib.pyplot as plt
 
 from PySide2.QtWidgets import QGridLayout, QHBoxLayout, QWidget, QMenuBar, QMainWindow, QVBoxLayout, \
-    QPushButton, QCheckBox, QLabel, QLineEdit, QMessageBox, QTabWidget, QMenu, QAction
+    QPushButton, QCheckBox, QLabel, QLineEdit, QMessageBox, QTabWidget, QMenu, QAction, QFileDialog
 from PySide2.QtCore import QRect, Qt
 from PySide2.QtGui import QCursor
 
@@ -23,6 +23,8 @@ import spectrofit.math.mathFunction as mF
 from spectrofit.tools.elements_table import ElementTable
 from spectrofit.tools.Signal_processing_toolbox import SigProcToolbox
 from spectrofit.tools.Interactive_Fit import InteractiveFit
+
+import os
 
 import bisect as b
 
@@ -556,6 +558,11 @@ class MainFrame(QMainWindow, QWidget):
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x = []
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].y = []
 
+    def save_file(self, msg):
+        name, _ = QFileDialog.getSaveFileName(self, "Save File", os.getcwd(), '.txt')
+        with open(name, "w+") as f:
+            f.write(msg)
+
     """
         FUNCTION TO SHOW INFOS, WRANINGS and ERRORS
     """
@@ -935,11 +942,11 @@ class MainFrame(QMainWindow, QWidget):
                     None
         """
         if self.abs.isChecked():
-            sol = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].simple_gaussian(
+            sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].simple_gaussian(
                 F.model_simple_gaussian)
             y = mF.model_simple_gaussian(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, sol)
         else:
-            sol = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].simple_gaussian(
+            sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].simple_gaussian(
                 F.model_simple_gaussian_emission)
             y = mF.model_simple_gaussian_emission(
                 self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, sol)
@@ -947,6 +954,7 @@ class MainFrame(QMainWindow, QWidget):
             self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, y, color="green")
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["fig"].canvas.draw()
         self.clean_list()
+        self.save_file(report)
 
     def _double_gaussian(self):
         """
@@ -962,11 +970,11 @@ class MainFrame(QMainWindow, QWidget):
                     None
         """
         if self.abs.isChecked():
-            sol = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].double_gaussian(
+            sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].double_gaussian(
                 F.model_double_gaussian)
             y = mF.model_double_gaussian(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, sol)
         else:
-            sol = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].double_gaussian(
+            sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].double_gaussian(
                 F.model_double_gaussian_emission)
             y = mF.model_double_gaussian_emission(
                 self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, sol)
@@ -974,6 +982,7 @@ class MainFrame(QMainWindow, QWidget):
             self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, y, color="green")
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["fig"].canvas.draw()
         self.clean_list()
+        self.save_file(report)
 
     def _simple_expo(self):
         """
@@ -988,12 +997,13 @@ class MainFrame(QMainWindow, QWidget):
                 @:return
                     None
         """
-        sol = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].simple_exp(F.model_simple_expo)
+        sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].simple_exp(F.model_simple_expo)
         y = mF.model_simple_expo(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, sol)
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["ax"].plot(
             self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, y, color="green")
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["fig"].canvas.draw()
         self.clean_list()
+        self.save_file(report)
 
     def _double_expo(self):
         """
@@ -1008,12 +1018,13 @@ class MainFrame(QMainWindow, QWidget):
                 @:return
                     None
         """
-        sol = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].double_exp(F.model_double_expo)
+        sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].double_exp(F.model_double_expo)
         y = mF.model_double_expo(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, sol)
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["ax"].plot(
             self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, y, color="green")
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["fig"].canvas.draw()
         self.clean_list()
+        self.save_file(report)
 
     def _linear(self):
         """
@@ -1028,12 +1039,13 @@ class MainFrame(QMainWindow, QWidget):
                 @:return
                     None
         """
-        sol = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].linear(F.model_linear)
+        sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].linear(F.model_linear)
         y = mF.model_linear(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, sol)
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["ax"].plot(
             self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, y, color="green")
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["fig"].canvas.draw()
         self.clean_list()
+        self.save_file(report)
 
     def _lorentz(self):
         """
@@ -1049,16 +1061,17 @@ class MainFrame(QMainWindow, QWidget):
                     None
         """
         if self.abs.isChecked():
-            sol = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].lorentz(F.model_lorentz)
+            sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].lorentz(F.model_lorentz)
             y = mF.model_lorentz(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, sol)
         else:
-            sol = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].lorentz(F.model_lorentz_emission)
+            sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].lorentz(F.model_lorentz_emission)
             y = mF.model_lorentz_emission(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, sol)
 
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["ax"].plot(
             self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, y, color="green")
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["fig"].canvas.draw()
         self.clean_list()
+        self.save_file(report)
 
     def _double_lorentz(self):
         """
@@ -1074,11 +1087,11 @@ class MainFrame(QMainWindow, QWidget):
                     None
         """
         if self.abs.isChecked():
-            sol = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].double_lorentz(
+            sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].double_lorentz(
                 F.model_double_lorentz)
             y = mF.model_double_lorentz(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, sol)
         else:
-            sol = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].double_lorentz(
+            sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].double_lorentz(
                 F.model_double_lorentz_emission)
             y = mF.model_double_lorentz_emission(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x,
                                                  sol)
@@ -1086,6 +1099,7 @@ class MainFrame(QMainWindow, QWidget):
             self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, y, color="green")
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["fig"].canvas.draw()
         self.clean_list()
+        self.save_file(report)
 
     def _mix(self):
         self.mix_fit = MixFit(self, self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"])

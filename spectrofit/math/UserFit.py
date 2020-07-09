@@ -228,6 +228,7 @@ class MixFit(QWidget):
                 self.params = self.model.make_params()
                 self.solution = self.model.fit(self.y, self.params, x=self.x, method=method)
                 print(self.solution.fit_report())
+                self.master.info(self.solution.fit_report())
 
                 y = 0
                 for key, value in self.checkbox_states.items():
@@ -289,3 +290,5 @@ class MixFit(QWidget):
                     color="green")
                 self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["fig"].canvas.draw()
                 self.master.clean_list()
+                
+                self.master.save_file(self.solution.fit_report())
