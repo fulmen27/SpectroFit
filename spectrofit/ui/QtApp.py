@@ -12,9 +12,9 @@ class App(QWidget):
 
         super().__init__(window)
 
-        self.main_frame = MainFrame(window)
+        self.main_frame = MainFrame(window)  # launch MainFrame
 
-        self.app.exec_()
+        self.app.exec_()  # Execute Qt App
 
 
 if __name__ == '__main__':

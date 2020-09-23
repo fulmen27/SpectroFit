@@ -6,9 +6,7 @@ import json
 
 import spectrofit.math.mathFunction as mF
 
-from spectrofit.ui.SliderExp import SliderExponential
 from spectrofit.ui.SliderGaussian import SliderGaussian
-from spectrofit.ui.SliderLin import SliderLinear
 from spectrofit.ui.SliderLorentz import SliderLorentz
 
 import numpy as np
@@ -16,10 +14,13 @@ import numpy as np
 
 class InteractiveFit(QWidget):
 
+    """Interactive Fit with slider to adjust curve to the spectrum"""
+
     def __init__(self, data):
         super().__init__()
         self.data = data
 
+        # Init all dictionnary
         self.curves = dict()
         self.curves["nb_lo"] = 0
         self.curves["nb_gaus"] = 0
@@ -33,6 +34,9 @@ class InteractiveFit(QWidget):
         self.show()
 
     def set_ui(self):
+
+        # Set window's layout and UI
+
         lay = QGridLayout()
         self.graphWidget = pg.PlotWidget()
         curve = self.graphWidget.plot(self.data["x"], self.data["y"])
@@ -73,6 +77,14 @@ class InteractiveFit(QWidget):
 
     @Slot()
     def _on_add_lo(self):
+        """
+
+        add a lorentz curve on the graph to fit the spectrum
+
+        :return: None
+        """
+
+        # set metadata of new curve
         self.curves["nb_lo"] += 1
         self.curves["lo{}".format(self.curves["nb_lo"])] = dict()
 
@@ -80,9 +92,12 @@ class InteractiveFit(QWidget):
         self.curves["lo{}".format(self.curves["nb_lo"])]["name"] = "lo{}".format(self.curves["nb_lo"])
         self.curves["lo{}".format(self.curves["nb_lo"])]["lim"] = [self.data["x"][0], self.data["x"][-1]]
 
+        # set parameter
         mu = (self.data["x"][0] + self.data["x"][-1]) / 2
         gamma = 1
         y = mF.model_lorentz_emission(np.asarray(self.data["x"]), [mu, gamma, 0])
+
+        # compute curve
         self.curves["lo{}".format(self.curves["nb_lo"])]["y"] = y
         self.curves["lo{}".format(self.curves["nb_lo"])]["curve"] = self.graphWidget.plot(self.data["x"], y)
 
@@ -93,6 +108,14 @@ class InteractiveFit(QWidget):
 
     @Slot()
     def _on_add_gaus(self):
+        """
+
+            add a gaussian curve on the graph to fit the spectrum
+
+            :return: None
+        """
+
+        # set metadata of new curve
         self.curves["nb_gaus"] += 1
         self.curves["gaus{}".format(self.curves["nb_gaus"])] = dict()
 
@@ -100,9 +123,13 @@ class InteractiveFit(QWidget):
         self.curves["gaus{}".format(self.curves["nb_gaus"])]["name"] = "gaus{}".format(self.curves["nb_gaus"])
         self.curves["gaus{}".format(self.curves["nb_gaus"])]["lim"] = [self.data["x"][0], self.data["x"][-1]]
 
+
+        # set parameter
         mu = (self.data["x"][0] + self.data["x"][-1]) / 2
         sigma = 1
         y = mF.model_simple_gaussian_emission(np.asarray(self.data["x"]), [sigma, mu, 0])
+
+        # compute curve
         self.curves["gaus{}".format(self.curves["nb_gaus"])]["y"] = y
         self.curves["gaus{}".format(self.curves["nb_gaus"])]["curve"] = self.graphWidget.plot(self.data["x"], y)
 
@@ -111,30 +138,21 @@ class InteractiveFit(QWidget):
 
     @Slot()
     def _on_add_l(self):
-        self.curves["nb_l"] += 1
-        self.curves["l{}".format(self.curves["nb_l"])] = dict()
-
-        self.curves["l{}".format(self.curves["nb_l"])]["count"] = self.curves["nb_l"]
-        self.curves["l{}".format(self.curves["nb_l"])]["name"] = "l{}".format(self.curves["nb_l"])
-        self.curves["l{}".format(self.curves["nb_l"])]["lim"] = [self.data["x"][0], self.data["x"][-1]]
-
-        a = 0
-        b = 0
-        y = mF.model_linear(np.asarray(self.data["x"]), [a, b])
-        self.curves["l{}".format(self.curves["nb_l"])]["y"] = y
-        self.curves["l{}".format(self.curves["nb_l"])]["curve"] = self.graphWidget.plot(self.data["x"], y)
-
-        self.curves["l{}".format(self.curves["nb_l"])]["curseur"] = SliderLinear(self, self.curves[
-            "l{}".format(self.curves["nb_l"])], self.data["x"])
+        """deprecated"""
+        print("Deprecated function")
 
     @Slot()
     def _on_add_exp(self):
-        self.curves["nb_exp"] += 1
-        self.curves["exp{}".format(self.curves["nb_exp"])] = dict()
-        self.curves["exp{}".format(self.curves["nb_exp"])]["curseur"] = SliderExponential(
-            self.curves["exp{}".format(self.curves["nb_exp"])])
+        """deprecated"""
+        print("Deprecated function")
 
     def update_all(self):
+        """
+
+        update sum of all curve when adding a new curve or modifying existing one
+
+        :return:
+        """
         self.curves["y_tot"] = np.asarray([0.0 for _ in range(len(self.data["x"]))])
         for key, value in self.curves.items():
             if type(value) == type(dict()):
@@ -142,6 +160,13 @@ class InteractiveFit(QWidget):
         self.curves["curve_tot"].setData(self.data["x"], self.curves["y_tot"], pen=self.pen_tot)
 
     def _fit_report(self):
+
+        """
+
+        build and save the report of the fit in json file
+
+        :return:
+        """
         report = dict()
         report["lim"] = [self.data["x"][0], self.data["x"][-1]]
         for key, value in self.curves.items():

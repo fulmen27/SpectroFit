@@ -88,11 +88,14 @@ class MainFrame(QMainWindow, QWidget):
             @:return
                 None
         """
+
+        # Create Layout
         self.layout = QGridLayout()
         menu_layout = QHBoxLayout()
         menu_layout.setGeometry(QRect(0, 0, 800, 50))
         self.bar = QMenuBar(self.master)
 
+        # Toolbar :
         file_menu = self.bar.addMenu("file")
         open_S = QAction("Ouvrir fichier S", self.master)
         open_S.triggered.connect(self._open_s)
@@ -129,19 +132,19 @@ class MainFrame(QMainWindow, QWidget):
         self.layout.addLayout(menu_layout, 0, 0, 1, -1)
 
         btn_layout = QVBoxLayout()
-        # Compute
+        # button layout
         self.compute_button = QPushButton("Compute")
         self.compute_button.setEnabled(False)
         self.compute_button.clicked.connect(self._on_compute)
         btn_layout.addWidget(self.compute_button)
         self.compute_button.show()
 
-        # Full Spectre
+        # Full Spectre check box layout
         self.full = QCheckBox("Full Spectrum")
         self.full.setChecked(False)
         btn_layout.addWidget(self.full)
 
-        # Get Order
+        # Get Order Label layout
         label = QLabel("Choisit ton ordre")
         label.setFixedHeight(10)
         btn_layout.addWidget(label)
@@ -149,14 +152,15 @@ class MainFrame(QMainWindow, QWidget):
         btn_layout.addWidget(self.num_ordre)
         btn_layout.setAlignment(Qt.AlignTop)
 
+        # Clean Button Layout
         self.clean_button = QPushButton("Clean")
         self.clean_button.setEnabled(False)
         self.clean_button.clicked.connect(self._on_clean)
         btn_layout.addWidget(self.clean_button)
         self.clean_button.show()
 
+        # Set up all GUI
         self.set_ui_canvas_Menu()
-
         self.layout.addLayout(btn_layout, 1, 1, Qt.AlignTop)
         self.master.setLayout(self.layout)
 
@@ -165,7 +169,10 @@ class MainFrame(QMainWindow, QWidget):
                set_ui_canvas_Menu
 
             @:brief
-                Set user interface for contect manu when right clicking on canva
+                Set user interface for contact menu when right clicking on canva
+                when right clicking two option :
+                    - place fitting point : see place_fitting_point function
+                    - place distance point : see place_distance_point function
 
             @:parameter
                 self
@@ -196,6 +203,7 @@ class MainFrame(QMainWindow, QWidget):
                 None
         """
         if not reprint:
+            # Create all dictionnary for data :
             self.dict_tabs["Tab_{}".format(self.tabs.count())] = {}
             self.dict_tabs["Tab_{}".format(self.tabs.count())]["Tab"] = QWidget()
             self.dict_tabs["Tab_{}".format(self.tabs.count())]["Index"] = self.tabs.count()
@@ -204,12 +212,17 @@ class MainFrame(QMainWindow, QWidget):
             self.dict_tabs["Tab_{}".format(self.tabs.count())]["fig"] = fig
             self.dict_tabs["Tab_{}".format(self.tabs.count())]["ax"] = ax
             self.dict_tabs["Tab_{}".format(self.tabs.count())]["data"] = dict()
+
+            # check data type (diff between Naarval and NEO-narval)
+
             if my_import.type == "s" or my_import.type == "csv":
+                # get data for plotting according to order :
                 self.dict_tabs["Tab_{}".format(self.tabs.count())]["data"]["x"] = my_import.data["lambda"][
                                                                                   lim[0]: lim[1]]
                 self.dict_tabs["Tab_{}".format(self.tabs.count())]["data"]["y"] = my_import.data["yspectre"][
                                                                                   lim[0]: lim[1]]
             elif my_import.type == "fits":
+                # get data for plotting according to order :
                 idx1 = my_import.fits_data["Wav"].columns.get_loc("Wavelength1")
                 idx2 = my_import.fits_data["Wav"].columns.get_loc("Intensity")
                 self.dict_tabs["Tab_{}".format(self.tabs.count())]["data"]["x"] = my_import.fits_data["Wav"].iloc[
@@ -218,6 +231,8 @@ class MainFrame(QMainWindow, QWidget):
                                                                                   lim[0]: lim[1], idx2].to_numpy()
             else:
                 raise ValueError("No x and y data for graph : unknown format of file")
+
+            # Init Fits class for the graph for further use :
             self.dict_tabs["Tab_{}".format(self.tabs.count())]["Fit"] = Fits(self,
                                                                              self.dict_tabs[
                                                                                  "Tab_{}".format(self.tabs.count())][
@@ -267,15 +282,17 @@ class MainFrame(QMainWindow, QWidget):
             self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Tab"].setLayout(
                 self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Tab"].layout)
 
+            # show canvas and update window
             self.tabs.layout.addWidget(self.tabs)
             self.layout.addLayout(self.tabs.layout, 1, 0, -1, 1)
             self.master.setLayout(self.layout)
             self.master.showMaximized()
 
         elif reprint:
+            # Get old data of the graph to reprint it :
             pos = self.tabs.currentIndex()
             plt.close(self.dict_tabs["Tab_{}".format(pos)]["fig"])
-            del (self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["canvas"])
+            self.dict_tabs["Tab_{}".format(pos)]["canvas"] = None
             self.dict_tabs["Tab_{}".format(pos)] = {}
             self.dict_tabs["Tab_{}".format(pos)]["Tab"] = QWidget()
             self.dict_tabs["Tab_{}".format(pos)]["Index"] = pos
@@ -285,19 +302,21 @@ class MainFrame(QMainWindow, QWidget):
             self.dict_tabs["Tab_{}".format(pos)]["ax"] = ax
             self.dict_tabs["Tab_{}".format(pos)]["data"] = dict()
             if my_import.type == "s" or my_import.type == "csv":
-                self.dict_tabs["Tab_{}".format(self.tabs.count())]["data"]["x"] = my_import.data["lambda"][
+                self.dict_tabs["Tab_{}".format(pos)]["data"]["x"] = my_import.data["lambda"][
                                                                                   lim[0]: lim[1]]
-                self.dict_tabs["Tab_{}".format(self.tabs.count())]["data"]["y"] = my_import.data["yspectre"][
+                self.dict_tabs["Tab_{}".format(pos)]["data"]["y"] = my_import.data["yspectre"][
                                                                                   lim[0]: lim[1]]
             elif my_import.type == "fits":
                 idx1 = my_import.fits_data["Wav"].columns.get_loc("Wavelength1")
                 idx2 = my_import.fits_data["Wav"].columns.get_loc("Intensity")
                 self.dict_tabs["Tab_{}".format(pos)]["data"]["x"] = my_import.fits_data["Wav"].iloc[
-                                                                                  lim[0]: lim[1], idx1].to_numpy()
+                                                                    lim[0]: lim[1], idx1].to_numpy()
                 self.dict_tabs["Tab_{}".format(pos)]["data"]["y"] = my_import.fits_data["Wav"].iloc[
-                                                                                  lim[0]: lim[1], idx2].to_numpy()
+                                                                    lim[0]: lim[1], idx2].to_numpy()
             else:
                 raise ValueError("No x and y data for graph : unknown format of file")
+
+            # reset Fits and lists
             self.dict_tabs["Tab_{}".format(pos)]["Fit"] = Fits(self, self.dict_tabs["Tab_{}".format(pos)]["data"])
             self.dict_tabs["Tab_{}".format(pos)]["fitting_bound"] = dict()
             self.dict_tabs["Tab_{}".format(pos)]["fitting_bound"]["x"] = list()
@@ -352,6 +371,8 @@ class MainFrame(QMainWindow, QWidget):
             @:return
                 None
         """
+
+        # Create all dictionnary for data :
         fig, ax = plot_from_xy_list(args)
         self.dict_tabs["Tab_{}".format(self.tabs.count())] = {}
         self.dict_tabs["Tab_{}".format(self.tabs.count())]["Tab"] = QWidget()
@@ -361,6 +382,8 @@ class MainFrame(QMainWindow, QWidget):
         self.dict_tabs["Tab_{}".format(self.tabs.count())]["fig"] = fig
         self.dict_tabs["Tab_{}".format(self.tabs.count())]["ax"] = ax
         self.dict_tabs["Tab_{}".format(self.tabs.count())]["data"] = dict()
+
+        # get data according to processed wavelet result
         self.dict_tabs["Tab_{}".format(self.tabs.count())]["data"]["x"] = args["import"].data["lambda"][
                                                                           args["lim"][0]: args["lim"][1]]
         self.dict_tabs["Tab_{}".format(self.tabs.count())]["data"]["y"] = args["import"].data["yspectre"][
@@ -439,7 +462,7 @@ class MainFrame(QMainWindow, QWidget):
             @:return
                 None
         """
-        # on ouvre le fichier que l'on fait choisir par l'utilisateur
+        # open csv file chosen by user : see ImportFile Class
         my_import = ImportFile("csv", self.master)
         self.links_list.append([self.tabs.count(), None, my_import])
         self.compute_button.setEnabled(True)
@@ -458,12 +481,28 @@ class MainFrame(QMainWindow, QWidget):
             @:return
                 None
         """
-        # on ouvre le fichier que l'on fait choisir par l'utilisateur
+        # open s file chosen by user : see ImportFile Class
         my_import = ImportFile("s", self.master)
         self.links_list.append([self.tabs.count(), None, my_import])
         self.compute_button.setEnabled(True)
 
     def _open_fits(self):
+
+        """
+               _open_fits
+
+            @:brief
+                Open a fit file and load data into an ImortFile class instance
+                add a line in the links_list
+
+            @:parameter
+                self
+
+            @:return
+                None
+        """
+
+        # open fits file chosen by user : see ImportFile Class
         my_import = ImportFile("fits", self.master)
         self.links_list.append([self.tabs.count(), None, my_import])
         self.compute_button.setEnabled(True)
@@ -485,6 +524,8 @@ class MainFrame(QMainWindow, QWidget):
             @:return
                 None
         """
+
+        # check if reprint or new import data
         if len(self.links_list) == self.tabs.count():
             my_import = self.links_list[self.tabs.currentIndex()][-1]
             reprint = True
@@ -492,18 +533,20 @@ class MainFrame(QMainWindow, QWidget):
             my_import = self.links_list[-1][-1]
             reprint = False
 
-        if self.full.isChecked():
-            lim = compute_delim(my_import, btn_state=self.full.isChecked())
-            fig, ax = plot_ordre(my_import, lim[0], lim[1])
+        if self.full.isChecked():  # check box true ?
+            lim = compute_delim(my_import, btn_state=self.full.isChecked())  # get limits
+            fig, ax = plot_ordre(my_import, lim[0], lim[1])  # plot figure
             self._set_canvas(my_import, lim, fig, ax, reprint)
+            # Enable action buttons
             self.find_ray.setEnabled(True)
             self.clean_button.setEnabled(True)
             self.signal_proc_btn.setEnabled(True)
         else:
             try:
-                order = int(self.num_ordre.text())
-                fig, ax, lim = plot_ordre(my_import, order=order, btn_state=self.full.isChecked())
-                self._set_canvas(my_import, lim, fig, ax, reprint)
+                order = int(self.num_ordre.text())  # get order
+                fig, ax, lim = plot_ordre(my_import, order=order, btn_state=self.full.isChecked())  # create figure
+                self._set_canvas(my_import, lim, fig, ax, reprint)  # plot figure
+                # Enable actions :
                 self.find_ray.setEnabled(True)
                 self.clean_button.setEnabled(True)
                 self.signal_proc_btn.setEnabled(True)
@@ -536,7 +579,7 @@ class MainFrame(QMainWindow, QWidget):
             @:return
                 None
         """
-        self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["canvas"].clean_canvas()
+        self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["canvas"].clean_canvas()  # clean all curves on canva
 
     def clean_list(self):
         """
@@ -559,6 +602,21 @@ class MainFrame(QMainWindow, QWidget):
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].y = []
 
     def save_file(self, msg):
+
+        """
+               save_file
+
+            @:brief
+                Use this function to save a message to a file with the application
+                file is saved at root of application
+
+            @:parameter
+                msg : message to save
+
+            @:return
+                None
+        """
+
         name, _ = QFileDialog.getSaveFileName(self, "Save File", os.getcwd(), '.txt')
         with open(name, "w+") as f:
             f.write(msg)
@@ -661,6 +719,7 @@ class MainFrame(QMainWindow, QWidget):
             """nothing happen for now"""
             pass
         elif event.button == MouseButton.RIGHT:
+            # if right click : show popup menu on Canvas
             self.event_click = event
             cursor = QCursor()
             pos = cursor.pos()
@@ -786,15 +845,21 @@ class MainFrame(QMainWindow, QWidget):
                 @:return
                     None
         """
+        # get last 2 points
+
         x1 = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["distance"]["x"][-2]
         x2 = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["distance"]["x"][-1]
         y1 = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["distance"]["y"][-2]
         y2 = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["distance"]["y"][-1]
+
+        # show message and computed distance
         message = "La distance horizontale entre les deux points est : {} \n" \
                   "La distance verticale entre les deux points est : {} \n" \
                   "La distance euclidienne est : {}".format(abs(x1 - x2), abs(y1 - y2),
                                                             np.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2))
         self.info(message)
+
+        # clean canvas and list
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["canvas"].clean_canvas([[x1, y1], [x2, y2]])
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["distance"]["x"].pop(-1)
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["distance"]["x"].pop(-1)
@@ -816,14 +881,16 @@ class MainFrame(QMainWindow, QWidget):
                 @:return
                     None
         """
+
+        # Create instance of SigProcToolbox
         self.signal_proc = SigProcToolbox(self)
 
     def _interactive_fit(self):
+        # get data of printed spectrum
         x = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x
-        print(x)
         y = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].y
-        print(y)
         data = {"x": x, "y": y}
+        # Create interactive fit
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["interactive_fit"] = InteractiveFit(data)
 
     """
@@ -856,6 +923,8 @@ class MainFrame(QMainWindow, QWidget):
                 @:return
                     None
         """
+
+        # layout for fit window
         self.window_fit = QWidget()
         layout_fit = QVBoxLayout()
         text = QLabel("Choose a function to fit to the data")
@@ -919,10 +988,14 @@ class MainFrame(QMainWindow, QWidget):
                 @:return
                     None
         """
+
+        # find limits for fit
         low_lim = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["fitting_bound"]["x"][-2]
         high_lim = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["fitting_bound"]["x"][-1]
+        # get data on which to fit
         x = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["data"]["x"]
         y = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["data"]["y"]
+        # get real data (delete recovering spectrum)
         i1 = b.bisect(x, low_lim)
         i2 = b.bisect(x, high_lim)
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x = x[i1: i2]
@@ -943,15 +1016,16 @@ class MainFrame(QMainWindow, QWidget):
         """
         if self.abs.isChecked():
             sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].simple_gaussian(
-                F.model_simple_gaussian)
+                F.model_simple_gaussian)  # get fit result
             y = mF.model_simple_gaussian(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, sol)
         else:
             sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].simple_gaussian(
-                F.model_simple_gaussian_emission)
+                F.model_simple_gaussian_emission)  # get fit result
             y = mF.model_simple_gaussian_emission(
-                self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, sol)
+                self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, sol)  # compute fit curve
+
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["ax"].plot(
-            self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, y, color="green")
+            self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, y, color="green")  # plot result
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["fig"].canvas.draw()
         self.clean_list()
         self.save_file(report)
@@ -971,15 +1045,16 @@ class MainFrame(QMainWindow, QWidget):
         """
         if self.abs.isChecked():
             sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].double_gaussian(
-                F.model_double_gaussian)
-            y = mF.model_double_gaussian(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, sol)
+                F.model_double_gaussian)  # get fit result
+            y = mF.model_double_gaussian(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x,
+                                         sol)  # compute fit curve
         else:
             sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].double_gaussian(
-                F.model_double_gaussian_emission)
+                F.model_double_gaussian_emission)  # get fit result
             y = mF.model_double_gaussian_emission(
-                self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, sol)
+                self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, sol)  # compute fit curve
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["ax"].plot(
-            self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, y, color="green")
+            self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, y, color="green")  # plot result
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["fig"].canvas.draw()
         self.clean_list()
         self.save_file(report)
@@ -997,10 +1072,12 @@ class MainFrame(QMainWindow, QWidget):
                 @:return
                     None
         """
-        sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].simple_exp(F.model_simple_expo)
-        y = mF.model_simple_expo(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, sol)
+        sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].simple_exp(
+            F.model_simple_expo)  # get fit result
+        y = mF.model_simple_expo(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x,
+                                 sol)  # compute fit curve
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["ax"].plot(
-            self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, y, color="green")
+            self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, y, color="green")  # plot result
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["fig"].canvas.draw()
         self.clean_list()
         self.save_file(report)
@@ -1018,10 +1095,12 @@ class MainFrame(QMainWindow, QWidget):
                 @:return
                     None
         """
-        sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].double_exp(F.model_double_expo)
-        y = mF.model_double_expo(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, sol)
+        sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].double_exp(
+            F.model_double_expo)  # get fit result
+        y = mF.model_double_expo(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x,
+                                 sol)  # compute fit curve
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["ax"].plot(
-            self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, y, color="green")
+            self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, y, color="green")  # plot result
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["fig"].canvas.draw()
         self.clean_list()
         self.save_file(report)
@@ -1039,10 +1118,12 @@ class MainFrame(QMainWindow, QWidget):
                 @:return
                     None
         """
-        sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].linear(F.model_linear)
-        y = mF.model_linear(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, sol)
+        sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].linear(
+            F.model_linear)  # get fit result
+        y = mF.model_linear(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x,
+                            sol)  # compute fit curve
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["ax"].plot(
-            self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, y, color="green")
+            self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, y, color="green")  # plot result
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["fig"].canvas.draw()
         self.clean_list()
         self.save_file(report)
@@ -1061,14 +1142,18 @@ class MainFrame(QMainWindow, QWidget):
                     None
         """
         if self.abs.isChecked():
-            sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].lorentz(F.model_lorentz)
-            y = mF.model_lorentz(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, sol)
+            sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].lorentz(
+                F.model_lorentz)  # get fit result
+            y = mF.model_lorentz(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x,
+                                 sol)  # compute fit curve
         else:
-            sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].lorentz(F.model_lorentz_emission)
-            y = mF.model_lorentz_emission(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, sol)
+            sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].lorentz(
+                F.model_lorentz_emission)  # get fit result
+            y = mF.model_lorentz_emission(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x,
+                                          sol)  # compute fit curve
 
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["ax"].plot(
-            self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, y, color="green")
+            self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, y, color="green")  # plot result
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["fig"].canvas.draw()
         self.clean_list()
         self.save_file(report)
@@ -1088,21 +1173,24 @@ class MainFrame(QMainWindow, QWidget):
         """
         if self.abs.isChecked():
             sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].double_lorentz(
-                F.model_double_lorentz)
-            y = mF.model_double_lorentz(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, sol)
+                F.model_double_lorentz)  # get fit result
+            y = mF.model_double_lorentz(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x,
+                                        sol)  # compute fit curve
         else:
             sol, report = self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].double_lorentz(
-                F.model_double_lorentz_emission)
+                F.model_double_lorentz_emission)  # get fit result
             y = mF.model_double_lorentz_emission(self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x,
-                                                 sol)
+                                                 sol)  # compute fit curve
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["ax"].plot(
-            self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, y, color="green")
+            self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"].x, y, color="green")  # plot result
         self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["fig"].canvas.draw()
         self.clean_list()
         self.save_file(report)
 
     def _mix(self):
+        # Mix Fit class instance :
         self.mix_fit = MixFit(self, self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["Fit"])
 
     def _new(self):
+        """deprecated : doesn't work"""
         self.ufit = UserFit(self, self.dict_tabs["Tab_{}".format(self.tabs.currentIndex())]["data"])

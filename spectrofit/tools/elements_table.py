@@ -5,7 +5,10 @@ from silx.gui.widgets import PeriodicTable
 
 
 class ElementTable(QWidget):
-
+    """
+            Class to handle elements on a spectrum
+            Display of rays for each known elements
+    """
     def __init__(self, master, window):
         super().__init__(window)
         self.master = master
@@ -15,6 +18,12 @@ class ElementTable(QWidget):
         self.selected_elements = []
 
     def set_ui(self):
+        """
+
+        set GUI for element table
+
+        :return:
+        """
         layout = QVBoxLayout()
         b_pt = QPushButton('Periodic Table')
         QObject.connect(b_pt, SIGNAL('clicked()'), self._start_periodic_table)
@@ -27,6 +36,10 @@ class ElementTable(QWidget):
         self.window.setLayout(layout)
 
     def _start_periodic_table(self):
+        """
+        Display periodic table. Cf. doc silx
+        :return:
+        """
         self.w = QTabWidget()
         self.pt = PeriodicTable.PeriodicTable(self.w)
         self.pt.sigElementClicked.connect(self._my_slot)
@@ -50,6 +63,13 @@ class ElementTable(QWidget):
         self.w.show()
 
     def _my_slot(self, item):
+        """
+
+            function to toggle clicked element
+
+            :param item:
+            :return:
+        """
         self.pt.elementToggle(item)
         tmp = list()
         for e in self.pt.getSelection():
@@ -64,6 +84,12 @@ class ElementTable(QWidget):
             self.selected_elements = tmp
 
     def _plot_element(self):
+        """
+
+            Plot all line in lineident file for each ray of the selected element
+
+            :return:
+        """
         e = self.selected_elements[-1]
         ordre = "ordre_{}".format(int(self.master.num_ordre.text()))
         x_lower = \
@@ -80,7 +106,8 @@ class ElementTable(QWidget):
         for key in self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["import"].lineident_json[e]:
             if key != 'number':
                 if x_lower < self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())][
-                    "import"].lineident_json[e][key]["lambda"] < x_upper:
+                        "import"].lineident_json[e][key]["lambda"] < x_upper:
+
                     ele_in_lims.append(self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())][
                                            "import"].lineident_json[e][key]["lambda"])
                     key_list.append(key)
@@ -89,21 +116,24 @@ class ElementTable(QWidget):
              self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["canvas"].y_lim[1]]
         for i in range(len(ele_in_lims)):
             x = [ele_in_lims[i], ele_in_lims[i]]
-            self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["ax"].plot(x, y, linewidth=2.0,
-                                                                                               linestyle='-.',
-                                                                                               label="{}".format(
-                                                                                                   key_list[i]),
-                                                                                               color='b')
-            self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["ax"].text(ele_in_lims[i],
-                                                                                               self.master.dict_tabs[
-                                                                                                   "Tab_{}".format(
-                                                                                                       self.master.tabs.currentIndex())][
-                                                                                                   "canvas"].y_lim[
-                                                                                                   0], "{}".format(e),
-                                                                                               color='b', fontsize=12)
+            self.master.dict_tabs["Tab_{}".format(
+                self.master.tabs.currentIndex())]["ax"].plot(x, y, linewidth=2.0, linestyle='-.', label="{}".format(
+                key_list[i]), color='b')
+            self.master.dict_tabs["Tab_{}".format(
+                self.master.tabs.currentIndex())]["ax"].text(ele_in_lims[i], self.master.dict_tabs["Tab_{}".format(
+                self.master.tabs.currentIndex())]["canvas"].y_lim[0], "{}".format(e), color='b', fontsize=12)
             self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["fig"].canvas.draw()
 
     def _supress_plot_element(self, to_erase):
+
+        """
+
+            Supress all ploted line when user unselect an element in the table
+
+            :param to_erase:
+            :return:
+        """
+
         k = 0
         l = len(self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["ax"].lines)
         for j in range(l):

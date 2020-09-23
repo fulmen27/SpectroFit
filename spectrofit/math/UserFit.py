@@ -10,6 +10,8 @@ from lmfit import Model
 
 
 class UserFit(QWidget):
+    """deprecated : doesn't work"""
+
     def __init__(self, master, data):
         self.master = master
         self.window = QWidget()
@@ -48,6 +50,8 @@ class UserFit(QWidget):
 
 class MixFit(QWidget):
 
+    """Fit Class for User to define his own model as a mix of predifined model"""
+
     def __init__(self, master, data):
         super().__init__()
         self.master = master
@@ -66,6 +70,10 @@ class MixFit(QWidget):
         self.window.show()
 
     def set_ui(self):
+
+        """ Set GUI for the mix function"""
+
+        # set all checkbox of predifined models
         lay = QGridLayout(self.window)
         label = QLabel("Model to choose : ")
         lay.addWidget(label, 0, 0)
@@ -85,9 +93,13 @@ class MixFit(QWidget):
             lay.addWidget(checkbox, i + 1, 0)
             self.checkbox_states[key] = checkbox
 
+        # Ask about type of spectrum :
+        label_emis = QLabel("Emission spectrum ?")
+        lay.addWidget(label_emis, i + 5, 0)
         self.emis = QCheckBox("Emission Spectrum")
-        lay.addWidget(self.emis, i + 2, 0)
+        lay.addWidget(self.emis, i + 6, 0)
 
+        # All method to solve the fitting problem
         label = QLabel("Method : ")
         lay.addWidget(label, 0, 2)
         for i, (key, text) in enumerate(
@@ -127,6 +139,14 @@ class MixFit(QWidget):
         lay.addWidget(process_fit, i + 2, 3)
 
     def _on_process_fit(self):
+
+        """
+
+        function when clicking on the process mix fit button
+
+        :return:
+        """
+
         s = 0
         method = ""
         for key, value in self.checkbox_states_fit_method.items():
@@ -147,6 +167,9 @@ class MixFit(QWidget):
                 moy2 = rd.uniform(min, max)
                 s1 = rd.uniform(0, 1)
                 s2 = rd.uniform(0, 1)
+                # check which model is selected
+                # if a model i selected, add it to the global model
+                # for each sub model set hint on parameters
                 if value.isChecked():
                     if key == "l":
                         models[key] = Model(F.model_linear)
@@ -225,12 +248,14 @@ class MixFit(QWidget):
                         self.model += value
                     j += 1
 
+                # fit the model to the data :
                 self.params = self.model.make_params()
                 self.solution = self.model.fit(self.y, self.params, x=self.x, method=method)
                 print(self.solution.fit_report())
                 self.master.info(self.solution.fit_report())
 
                 y = 0
+                # get results
                 for key, value in self.checkbox_states.items():
                     if value.isChecked():
                         if key == "l":
@@ -285,6 +310,8 @@ class MixFit(QWidget):
                                 y += mF.model_double_gaussian_emission(self.x, coefficient)
                             else:
                                 y += mF.model_double_gaussian(self.x, coefficient)
+
+                # plot the result of the curve :
                 self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["ax"].plot(
                     self.master.dict_tabs["Tab_{}".format(self.master.tabs.currentIndex())]["Fit"].x, y,
                     color="green")

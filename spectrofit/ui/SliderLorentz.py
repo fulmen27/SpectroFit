@@ -25,6 +25,8 @@ class SliderLorentz(QWidget):
         self.show()
 
     def set_ui_lo(self):
+        # Set up all Layout :
+
         lay = QGridLayout()
 
         self.slider_mean.setTickPosition(QSlider.TicksBelow)
@@ -160,54 +162,205 @@ class SliderLorentz(QWidget):
         self.setLayout(lay)
 
     def mean_slow_add(self):
+        """
+
+        @brief:
+            on mean :
+            add 0.001 to slider when clicking slow add button
+
+        :parameter:
+            self
+
+        :return:
+            None
+        """
         self.slider_mean.setValue(self.slider_mean.value() + 0.001)
         self._on_change_mean(self.slider_mean.value())
 
     def mean_fast_add(self):
+        """
+
+            @brief:
+                on mean :
+                add 0.01 to slider when clicking fast add button
+
+            :parameter:
+                self
+
+            :return:
+                None
+        """
         self.slider_mean.setValue(self.slider_mean.value() + 0.01)
         self._on_change_mean(self.slider_mean.value())
 
     def mean_slow_minus(self):
+        """
+
+            @brief:
+                on mean :
+                minus 0.001 to slider when clicking slow minus button
+
+            :parameter:
+                self
+
+            :return:
+                None
+        """
         self.slider_mean.setValue(self.slider_mean.value() - 0.001)
         self._on_change_mean(self.slider_mean.value())
 
     def mean_fast_minus(self):
+        """
+
+            @brief:
+                on mean :
+                minus 0.01 to slider when clicking fast minus button
+
+            :parameter:
+                self
+
+            :return:
+                None
+        """
         self.slider_mean.setValue(self.slider_mean.value() - 0.01)
         self._on_change_mean(self.slider_mean.value())
 
     def gamma_slow_add(self):
+        """
+
+        @brief:
+            on gamma :
+            add 0.001 to slider when clicking slow add button
+
+        :parameter:
+            self
+
+        :return:
+            None
+        """
         self.slider_gamma.setValue(self.slider_gamma.value() + 0.001)
         self._on_change_gamma(self.slider_gamma.value())
 
     def gamma_fast_add(self):
+        """
+
+            @brief:
+                on gamma :
+                add 0.01 to slider when clicking fast add button
+
+            :parameter:
+                self
+
+            :return:
+                None
+        """
         self.slider_gamma.setValue(self.slider_gamma.value() + 0.01)
         self._on_change_gamma(self.slider_gamma.value())
 
     def gamma_slow_minus(self):
+        """
+
+            @brief:
+                on gamma :
+                minus 0.001 to slider when clicking slow minus button
+
+            :parameter:
+                self
+
+            :return:
+                None
+        """
         self.slider_gamma.setValue(self.slider_gamma.value() - 0.001)
         self._on_change_gamma(self.slider_gamma.value())
 
     def gamma_fast_minus(self):
+        """
+
+            @brief:
+                on gamma :
+                minus 0.01 to slider when clicking fast minus button
+
+            :parameter:
+                self
+
+            :return:
+                None
+        """
         self.slider_gamma.setValue(self.slider_gamma.value() - 0.01)
         self._on_change_gamma(self.slider_gamma.value())
 
     def add_slow_add(self):
+        """
+
+        @brief:
+            on add :
+            add 0.001 to slider when clicking slow add button
+
+        :parameter:
+            self
+
+        :return:
+            None
+        """
         self.slider_add.setValue(self.slider_add.value() + 0.001)
         self._on_change_add(self.slider_add.value())
 
     def add_fast_add(self):
+        """
+
+            @brief:
+                on add :
+                add 0.01 to slider when clicking fast add button
+
+            :parameter:
+                self
+
+            :return:
+                None
+        """
         self.slider_add.setValue(self.slider_add.value() + 0.01)
         self._on_change_add(self.slider_add.value())
 
     def add_slow_minus(self):
+        """
+
+            @brief:
+                on add :
+                minus 0.001 to slider when clicking slow minus button
+
+            :parameter:
+                self
+
+            :return:
+                None
+        """
         self.slider_add.setValue(self.slider_add.value() - 0.001)
         self._on_change_add(self.slider_add.value())
 
     def add_fast_minus(self):
+        """
+
+            @brief:
+                on add :
+                minus 0.01 to slider when clicking fast minus button
+
+            :parameter:
+                self
+
+            :return:
+                None
+        """
         self.slider_add.setValue(self.slider_add.value() - 0.01)
         self._on_change_add(self.slider_add.value())
 
     def _on_change_mean(self, event):
+        """
+        Change mean value and update cursor position
+
+        :param event: event that update the value
+
+        :return: None
+        """
         self.label_mean_actual_val.setNum(event)
         if self.emis.isChecked():
             y = mF.model_lorentz_emission(np.asarray(self.data),
@@ -218,6 +371,13 @@ class SliderLorentz(QWidget):
         self.update_curves(y)
 
     def _on_change_add(self, event):
+        """
+            Change add value and update cursor position
+
+            :param event: event that update the value
+
+            :return: None
+        """
         self.label_add_actual_val.setNum(event)
         if self.emis.isChecked():
             y = mF.model_lorentz_emission(np.asarray(self.data),
@@ -228,6 +388,13 @@ class SliderLorentz(QWidget):
         self.update_curves(y)
 
     def _on_change_gamma(self, event):
+        """
+            Change gamma value and update cursor position
+
+            :param event: event that update the value
+
+            :return: None
+        """
         self.label_gamma_actual_val.setNum(event)
         if self.emis.isChecked():
             y = mF.model_lorentz_emission(np.asarray(self.data),
@@ -238,6 +405,13 @@ class SliderLorentz(QWidget):
         self.update_curves(y)
 
     def update_curves(self, y):
+        """
+            show the updated curve after one parameter have changed.
+
+            :param y: new curve to show
+
+            :return: None
+        """
         self.curve["curve"].setData(self.data, y, pen=self.pen)
         self.master.curves[self.curve["name"]]["y"] = y
         self.master.update_all()
