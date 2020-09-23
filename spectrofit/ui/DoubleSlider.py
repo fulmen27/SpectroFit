@@ -3,6 +3,11 @@ from PySide2.QtCore import Signal
 
 
 class Slider(QSlider):
+    """
+
+    redefined QSlider to allow to use Double number
+
+    """
     # create our our signal that we can connect to if necessary
     doubleValueChanged = Signal(float)
 

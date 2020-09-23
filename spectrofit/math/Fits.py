@@ -4,8 +4,17 @@ from lmfit import Model
 
 e = 10 ** (-8)
 
+
 class Fits:
     def __init__(self, master, data):
+        """
+
+        During init of a new tab/canvas in main window, a fit instance is create
+        when a fit instance is created, the data to fit on are loaded in the two array x and y
+
+        :param master: main window
+        :param data:  data to fit on
+        """
         self.master = master
         self.x = np.array(data["x"])
         self.y = np.array(data["y"])
@@ -16,15 +25,27 @@ class Fits:
 
     # FITS
     def simple_gaussian(self, mod):
+        """
+
+            Function to fit a simple gaussian model to the data
+
+            :param mod: model to fit
+            :return:
+                - model : results of the fit
+                - Report of the fit function
+        """
         min = np.asarray(self.x).min()
         max = np.asarray(self.x).max()
         moy = (min + max) / 2
-        gmodel = Model(mod)
+        gmodel = Model(mod)  # create model
+        # set constraint on parameters value
         gmodel.set_param_hint('sigma1_g', min=0, max=100)
         gmodel.set_param_hint('mu1_g', min=min, max=max)
         gmodel.set_param_hint('add_g', min=0)
+        # fit the model to data :
         self.solution["simple_gaussian"] = gmodel.fit(self.y, x=self.x, sigma1_g=1, mu1_g=moy, add_g=1,
                                                       method='powell')
+        # get results
         self.master.info(self.solution["simple_gaussian"].fit_report())
         print(self.solution["simple_gaussian"].fit_report())
         self.solution["simple_gaussian_fit"] = [self.solution["simple_gaussian"].best_values['sigma1_g'],
@@ -33,17 +54,28 @@ class Fits:
         return self.solution["simple_gaussian_fit"], self.solution["simple_gaussian"].fit_report()
 
     def double_gaussian(self, mod):
+        """
+
+            Function to fit a double gaussian model to the data
+
+            :param mod: model to fit
+            :return:
+                - model : results of the fit
+                - Report of the fit function
+        """
         min = np.asarray(self.x).min()
         max = np.asarray(self.x).max()
         moy1 = (min + max) / 2 + 5
         moy2 = (min + max) / 2 - 5
-        gmodel = Model(mod)
+        gmodel = Model(mod)  # create model
+        # set constraint on parameters value
         gmodel.set_param_hint('sigma1_dg', min=0)
         gmodel.set_param_hint('sigma2_dg', min=0)
         gmodel.set_param_hint('mu1_dg', min=min, max=max)
         gmodel.set_param_hint('mu2_dg', min=min, max=max)
         self.solution["double_gaussian"] = gmodel.fit(self.y, x=self.x, sigma1_dg=1, sigma2_dg=1, mu1_dg=moy1,
                                                       mu2_dg=moy2, add_dg=1, method='powell')
+        # get results
         self.master.info(self.solution["double_gaussian"].fit_report())
         print(self.solution["double_gaussian"].fit_report())
         self.solution["double_gaussian_fit"] = [self.solution["double_gaussian"].best_values['sigma1_dg'],
@@ -54,8 +86,18 @@ class Fits:
         return self.solution["double_gaussian_fit"], self.solution["double_gaussian"].fit_report()
 
     def simple_exp(self, mod):
-        gmodel = Model(mod)
+        """
+
+            Function to fit a simple exponential model to the data
+
+            :param mod: model to fit
+            :return:
+                - model : results of the fit
+                - Report of the fit function
+        """
+        gmodel = Model(mod)  # create model
         self.solution["simple_exp"] = gmodel.fit(self.y, x=self.x, a_e=0, b_e=0, add_e=0, method='powell')
+        # get results
         print(self.solution["simple_exp"].fit_report())
         self.master.info(self.solution["simple_exp"].fit_report())
         self.solution["simple_exp_fit"] = [self.solution["simple_exp"].best_values['a_e'],
@@ -64,9 +106,19 @@ class Fits:
         return self.solution["simple_exp_fit"], self.solution["simple_exp"].fit_report()
 
     def double_exp(self, mod):
-        gmodel = Model(mod)
+        """
+
+            Function to fit a double exponential model to the data
+
+            :param mod: model to fit
+            :return:
+                - model : results of the fit
+                - Report of the fit function
+        """
+        gmodel = Model(mod)  # create model
         self.solution["double_exp"] = gmodel.fit(self.y, x=self.x, a_de=0, b_de=0, c_de=0, d_de=0, add_de=0,
                                                  method='powell')
+        # get results
         print(self.solution["double_exp"].fit_report())
         self.master.info(self.solution["double_exp"].fit_report())
         self.solution["double_exp_fit"] = [self.solution["double_exp"].best_values['a_de'],
@@ -77,13 +129,24 @@ class Fits:
         return self.solution["double_exp_fit"], self.solution["double_exp"].fit_report()
 
     def lorentz(self, mod):
+        """
+
+            Function to fit a simple lorentz model to the data
+
+            :param mod: model to fit
+            :return:
+                - model : results of the fit
+                - Report of the fit function
+        """
         min = np.asarray(self.x).min()
         max = np.asarray(self.x).max()
         moy = (min + max) / 2
-        gmodel = Model(mod)
+        gmodel = Model(mod)  # create model
+        # set constraint on parameters value
         gmodel.set_param_hint('gamma_l', min=0)
         gmodel.set_param_hint('mu_l', min=min, max=max)
         self.solution["lorentz"] = gmodel.fit(self.y, x=self.x, mu_l=moy, gamma_l=1, add_l=1, method='powell')
+        # get results
         print(self.solution["lorentz"].fit_report())
         self.master.info(self.solution["lorentz"].fit_report())
         self.solution["lorentz_fit"] = [self.solution["lorentz"].best_values['mu_l'],
@@ -92,17 +155,28 @@ class Fits:
         return self.solution["lorentz_fit"], self.solution["lorentz"].fit_report()
 
     def double_lorentz(self, mod):
+        """
+
+            Function to fit a double lorentz model to the data
+
+            :param mod: model to fit
+            :return:
+                - model : results of the fit
+                - Report of the fit function
+        """
         min = np.asarray(self.x).min()
         max = np.asarray(self.x).max()
         moy1 = (min + max) / 2 + 5
         moy2 = (min + max) / 2 - 5
-        gmodel = Model(mod)
+        gmodel = Model(mod)  # create model
+        # set constraint on parameters value
         gmodel.set_param_hint('gamma1_dl', min=0)
         gmodel.set_param_hint('gamma2_dl', min=0)
         gmodel.set_param_hint('mu1_dl', min=min, max=max)
         gmodel.set_param_hint('mu2_dl', min=min, max=max)
         self.solution["double_lorentz"] = gmodel.fit(self.y, x=self.x, mu1_dl=moy1, gamma1_dl=2, mu2_dl=moy2,
                                                      gamma2_dl=2, add_dl=1, method='powell')
+        # get results
         print(self.solution["double_lorentz"].fit_report())
         self.master.info(self.solution["double_lorentz"].fit_report())
         self.solution["double_lorentz_fit"] = [self.solution["double_lorentz"].best_values['mu1_dl'],
@@ -113,8 +187,18 @@ class Fits:
         return self.solution["double_lorentz_fit"], self.solution["double_lorentz"].fit_report()
 
     def linear(self, mod):
-        gmodel = Model(mod)
+        """
+
+            Function to fit a linear model to the data
+
+            :param mod: model to fit
+            :return:
+                - model : results of the fit
+                - Report of the fit function
+        """
+        gmodel = Model(mod)  # create model
         self.solution["linear"] = gmodel.fit(self.y, x=self.x, a_l=0, b_l=0, method='powell')
+        # get results
         print(self.solution["linear"].fit_report())
         self.master.info(self.solution["linear"].fit_report())
         self.solution["linear_fit"] = [self.solution["linear"].best_values['a_l'],

@@ -25,6 +25,8 @@ class SliderGaussian(QWidget):
         self.show()
 
     def set_ui_lo(self):
+        # Set up all Layout :
+
         lay = QGridLayout()
 
         self.slider_mu.setTickPosition(QSlider.TicksBelow)
@@ -160,54 +162,198 @@ class SliderGaussian(QWidget):
         self.setLayout(lay)
 
     def mu_slow_add(self):
+        """
+            @brief:
+                on mean :
+                add 0.001 to slider when clicking slow add button
+
+            :parameter:
+                self
+
+            :return:
+                None
+        """
         self.slider_mu.setValue(self.slider_mu.value() + 0.001)
         self._on_change_mu(self.slider_mu.value())
 
     def mu_fast_add(self):
+        """
+            @brief:
+                on mean :
+                add 0.01 to slider when clicking fast add button
+
+            :parameter:
+                self
+
+            :return:
+                None
+        """
         self.slider_mu.setValue(self.slider_mu.value() + 0.01)
         self._on_change_mu(self.slider_mu.value())
 
     def mu_slow_minus(self):
+        """
+            @brief:
+                on mean :
+                minus 0.001 to slider when clicking slow minus button
+
+            :parameter:
+                self
+
+            :return:
+                None
+        """
         self.slider_mu.setValue(self.slider_mu.value() - 0.001)
         self._on_change_mu(self.slider_mu.value())
 
     def mu_fast_minus(self):
+        """
+            @brief:
+                on mean :
+                minus 0.01 to slider when clicking fast minus button
+
+            :parameter:
+                self
+
+            :return:
+                None
+        """
         self.slider_mu.setValue(self.slider_mu.value() - 0.01)
         self._on_change_mu(self.slider_mu.value())
 
     def sigma_slow_add(self):
+        """
+            @brief:
+                on sigma :
+                add 0.001 to slider when clicking slow add button
+
+            :parameter:
+                self
+
+            :return:
+                None
+        """
         self.slider_sigma.setValue(self.slider_sigma.value() + 0.001)
         self._on_change_sigma(self.slider_sigma.value())
 
     def sigma_fast_add(self):
+        """
+            @brief:
+                on sigma :
+                add 0.01 to slider when clicking fast add button
+
+            :parameter:
+                self
+
+            :return:
+                None
+        """
         self.slider_sigma.setValue(self.slider_sigma.value() + 0.01)
         self._on_change_sigma(self.slider_sigma.value())
 
     def sigma_slow_minus(self):
+        """
+            @brief:
+                on sigma :
+                minus 0.001 to slider when clicking slow minus button
+
+            :parameter:
+                self
+
+            :return:
+                None
+        """
         self.slider_sigma.setValue(self.slider_sigma.value() - 0.001)
         self._on_change_sigma(self.slider_sigma.value())
 
     def sigma_fast_minus(self):
+        """
+
+            @brief:
+                on sigma :
+                minus 0.01 to slider when clicking fast minus button
+
+            :parameter:
+                self
+
+            :return:
+                None
+        """
         self.slider_sigma.setValue(self.slider_sigma.value() - 0.01)
         self._on_change_sigma(self.slider_sigma.value())
 
     def add_slow_add(self):
+        """
+
+        @brief:
+            on add :
+            add 0.001 to slider when clicking slow add button
+
+        :parameter:
+            self
+
+        :return:
+            None
+        """
         self.slider_add.setValue(self.slider_add.value() + 0.001)
         self._on_change_add(self.slider_add.value())
 
     def add_fast_add(self):
+        """
+
+            @brief:
+                on add :
+                add 0.01 to slider when clicking fast add button
+
+            :parameter:
+                self
+
+            :return:
+                None
+        """
         self.slider_add.setValue(self.slider_add.value() + 0.01)
         self._on_change_add(self.slider_add.value())
 
     def add_slow_minus(self):
+        """
+
+             @brief:
+                 on add :
+                 minus 0.001 to slider when clicking slow minus button
+
+             :parameter:
+                 self
+
+             :return:
+                 None
+         """
         self.slider_add.setValue(self.slider_add.value() - 0.001)
         self._on_change_add(self.slider_add.value())
 
     def add_fast_minus(self):
+        """
+
+            @brief:
+                on add :
+                minus 0.01 to slider when clicking fast minus button
+
+            :parameter:
+                self
+
+            :return:
+                None
+        """
         self.slider_add.setValue(self.slider_add.value() - 0.01)
         self._on_change_add(self.slider_add.value())
 
     def _on_change_mu(self, event):
+        """
+             Change mean value and update cursor position
+
+             :param event: event that update the value
+
+             :return: None
+         """
         self.label_mu_actual_val.setNum(event)
         if self.emis.isChecked():
             y = mF.model_simple_gaussian_emission(np.asarray(self.data),
@@ -218,6 +364,13 @@ class SliderGaussian(QWidget):
         self.update_curves(y)
 
     def _on_change_add(self, event):
+        """
+            Change add value and update cursor position
+
+            :param event: event that update the value
+
+            :return: None
+        """
         self.label_add_actual_val.setNum(event)
         if self.emis.isChecked():
             y = mF.model_simple_gaussian_emission(np.asarray(self.data),
@@ -228,6 +381,13 @@ class SliderGaussian(QWidget):
         self.update_curves(y)
 
     def _on_change_sigma(self, event):
+        """
+            Change sigma value and update cursor position
+
+            :param event: event that update the value
+
+            :return: None
+        """
         self.label_sigma_actual_val.setNum(event)
         if self.emis.isChecked():
             y = mF.model_simple_gaussian_emission(np.asarray(self.data),
@@ -238,6 +398,13 @@ class SliderGaussian(QWidget):
         self.update_curves(y)
 
     def update_curves(self, y):
+        """
+            show the updated curve after one parameter have changed.
+
+            :param y: new curve to show
+
+            :return: None
+        """
         self.curve["curve"].setData(self.data, y, pen=self.pen)
         self.master.curves[self.curve["name"]]["y"] = y
         self.master.update_all()

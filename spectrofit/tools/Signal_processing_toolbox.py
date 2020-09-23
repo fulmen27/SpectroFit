@@ -4,12 +4,13 @@ import numpy as np
 from PySide2.QtWidgets import QPushButton, QWidget, QTabWidget, QVBoxLayout, QGridLayout, QCheckBox, QLabel, QLineEdit, \
     QComboBox
 from PySide2.QtCore import SIGNAL, QObject
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 
 class SigProcToolbox(QWidget):
+
+    """Class to handle all processing related to digital signal processing"""
 
     def __init__(self, main_frame):
         self.main_frame = main_frame
@@ -67,6 +68,7 @@ class SigProcToolbox(QWidget):
 
             @:brief
                 Set user interface of the second tab : wavelet processing tab
+                see pywt documentation
 
             @:parameter
                 self
@@ -77,6 +79,7 @@ class SigProcToolbox(QWidget):
         lay = QGridLayout(self.tab2)
         label = QLabel("Wavelet family :")
         lay.addWidget(label, 0, 1)
+        # all possible method for wevelet processing
         for i, (key, text) in enumerate(
                 (
                         ("haar", "Haar"),
@@ -99,11 +102,13 @@ class SigProcToolbox(QWidget):
             checkbox.setChecked(False)
             lay.addWidget(checkbox, i + 1, 1)
             self.checkbox_states[key] = checkbox
+            # set combo box with method
             self.wavelet_combo_box[key] = QComboBox()
             l = pywt.wavelist(key)
             self.wavelet_combo_box[key].addItems(l)
             lay.addWidget(self.wavelet_combo_box[key], i + 1, 2)
 
+        # choose order of decomposition
         label_order_decomp = QLabel("choose order of decomposition : \t")
         lay.addWidget(label_order_decomp, 0, 0)
         self.order_decomp = QLineEdit()
